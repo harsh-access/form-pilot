@@ -1,0 +1,248 @@
+<div class="bg-light-100 fs-7 form-view" *ngIf="isShowComponent">
+  <!-- Header Part -->
+  <div class="shadow-m px-3 pt-4 mb-3 pb-2">
+    <div class="row g-0 align-items-center my-2">
+      <div class="col-xs-12 col-sm-6 left">
+        <h2 class="h4">Registration Form</h2>
+        <p class="mb-0 font-open-sans text-gray-200">
+          Please complete each tab below, click next after completing each section. Once completed
+          the
+          <i aria-hidden="true" class="fa fa-exclamation-circle" style="color: #f5bd64;"></i> icon
+          will turn
+          <i aria-hidden="true" class="fa fa-check-circle" style="color: #89df4e;"></i>
+        </p>
+
+      </div>
+      <div class="col-xs-12 col-sm-6 right">
+        <div class="d-flex justify-content-end">
+          <div *ngIf="!isViewTemplate;else forViewTemplate">
+            <div class="d-flex align-items-center">
+              <button class="btn btn-dgray btn-hover px-4 py-2 me-2 btn-hover" (click)="createCandidate()">Test</button>
+              <button [disabled]="dynamicForm.applicationFormInfo.templateDescription != 1"
+                class="btn-hover custom-bg-blue px-3 py-2 mx-2 {{dynamicForm.applicationFormInfo.templateDescription != 1? 'cursor-not-allowed opacity-75' : ''}}"
+                (click)="publishForm()"> Publish</button>
+              <button class="btn-red px-3 py-2 ms-2 hover-bg-none"
+                (click)="discardForm()"><i aria-hidden="true" class="pe-1 fa fa-trash custom-red fs-4"></i> </button>
+            </div>
+            <div *ngIf="dynamicForm.applicationFormInfo.lastModifiedDate && dynamicForm.applicationFormInfo.userName"
+              class="mb-0 pt-2 mb-0 font-open-sans text-gray-300 fs-7">
+              <p class="mb-0" style="cursor: default;font-size: 11px;"
+                [title]="'Updated By '+ (dynamicForm.applicationFormInfo.userName | titlecase) + ' on '+ (dynamicForm.applicationFormInfo.lastModifiedDate | date : 'MMMM d, y h:mm:ss a')">
+                <!-- <i aria-hidden="true" class="fa fa-check fs-6" style="color: #89df4e;"></i> -->
+                Latest draft modified on {{dynamicForm.applicationFormInfo.lastModifiedDate | date : 'dd/MM/yyyy'}}
+              </p>
+              <p class="mb-0" style="cursor: default;font-size: 11px; color: #f45b5b;">
+                <!-- <i aria-hidden="true" class="fa fa-check fs-6" style="color: #89df4e;"></i> -->
+                This draft will expire on {{draftExpirydate}}
+              </p>
+            </div>
+          </div>
+          <ng-template #forViewTemplate>
+            <div *ngIf="dynamicForm.applicationFormInfo.formTemplateType == null && !dynamicForm.applicationFormInfo.isFreeForm" class="d-flex align-items-center">
+              <button class="btn-hover custom-bg-blue px-3 py-2 mx-2"
+                (click)="onFormEdit()"> Edit Form</button>
+            </div>
+          </ng-template>
+          <!-- <div class="form-check form-switch custom-switch position-relative">
+            <input class="form-check-input" type="checkbox" role="switch" id="deviceSwitch" >
+            <label for="deviceSwitch"></label>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <!-- Stage Listing -->
+    <div *ngIf="!isViewTemplate;else StageListView"
+      class="px-1 stageList-container {{isShowDragBoundry ? 'stageList-boundary' : ''}} {{editableStageId > 0 ? ' px-2':''}}" cdkDropListGroup>
+      <div *ngIf="stageList && stageList.length>0" class="align-items-center row list-unstyled justify-content-start  mb-0 py-2" >
+        <div class="drag-blocks my-2 px-2">
+          <div class="rounded p-3 d-flex align-items-center justify-content-between shadow-sm cursor-not-allowed  fw-semibold text-gray-300"
+            style="background-color: #ffffff; ">
+            {{ dynamicForm.applicationFormInfo.formType == FormType.Candidate ? 'Personal Information' : dynamicForm.applicationFormInfo.formType == FormType.RererenceCheck ? 'Referee Information' : 'Client Information'}}
+            <i aria-hidden="true" class="fa fa-check-circle ms-auto me-0 text-light-green fs-6"></i>
+          </div>
+        </div>
+        <div *ngFor="let item of stageList; let num=index"
+          class="drag-blocks {{ editableStageId > -1 ?'my-3':'my-2'}} px-2 " (dblclick)="scrollView(item.formStageId)"
+          (dblclick)="editableStageId = -1" cdkDropList [cdkDropListData]="num">
+          <div
+            (click)="editableStageId == item.formStageId?  editableStageId = -1: isValidStageToManage(item.stageName) ?  editableStageId = item.formStageId : ''; editableSectionId = -1; editableFieldId=-1;"
+            class="{{editableStageId == item.formStageId ? 'dragging-box': ''}} rounded p-3 d-flex align-items-center justify-content-between shadow-sm cursor-pointer fw-semibold text-gray-300 bg-white stageList-box position-relative"
+            cdkDragBoundary=".stageList-boundary" cdkDrag [cdkDragData]="num" (cdkDragDropped)="dragEntered($event)" (cdkDragStarted)="isShowDragBoundry=true" [cdkDragDisabled]="!isValidStageToManage(item.stageName, 3)">
+            <button *ngIf="editableStageId == item.formStageId && isValidStageToManage(item.stageName)" class="drag-btn badge bg-primary border-0 p-0">
+              <i aria-hidden="true" class="fa fa-hand-paper-o fs-6"></i></button>
+            {{ item.stageName == 'Withholding Declaration' ? 'Update(s) to Bank, Tax, Super' : item.stageName }}
+            <i *ngIf="editableStageId  != item.formStageId" aria-hidden="true" class="fa fa-check-circle ms-auto me-0 text-light-green fs-6"></i>
+            <div class="stageList-custom-placeholder" *cdkDragPlaceholder></div>
+            <div *ngIf="editableStageId == item.formStageId && isValidStageToManage(item.stageName)" class="dragging-box-btn d-flex justify-content-end position-absolute">
+              <button *ngIf="isValidStageToManage(item.stageName,2)" class="badge bg-danger bg-opacity-75 border-0 mx-1 me-0 p-0" (click)="deleteStageAction(item)">
+                <span class="fa fa-trash" aria-hidden="true"></span></button>
+              <button *ngIf="isValidStageToManage(item.stageName,1)" class="badge bg-primary border-0 mx-1 p-0" (click)="editStageAction($event,item)">
+                <span class="fa fa-cog" aria-hidden="true"></span></button>
+            </div>
+          </div>
+        </div>
+        <div class="drag-blocks my-2 px-2">
+          <div (click)="addNewStageAction($event)"
+            class="addnew-section rounded p-3 d-flex align-items-center justify-content-center shadow-sm cursor-pointer fw-semibold text-gray-300 bg-light bg-opacity-75"
+            style="border: dotted #ccc 2px;">
+            <span class="fa fa-plus-circle me-2 text-light-green"></span> Add New Section
+          </div>
+        </div>
+        <div *ngIf="dynamicForm?.addBackgroundCheckStage && isSupportUser && dynamicForm.applicationFormInfo.formType != FormType.RererenceCheck" class="drag-blocks my-2 px-2">
+          <div (click)="AddBackgroundCheckAction($event)"
+            class=" rounded p-3 d-flex align-items-center justify-content-center shadow-sm cursor-pointer fw-semibold text-gray-300 bg-light bg-opacity-75"
+            style="border: dotted #ccc 2px;">
+            <span class="fa fa-plus-circle me-2 text-light-green"></span> Background Checks
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-template #StageListView>
+      <div class="px-1">
+        <ul class="align-items-center row list-unstyled stage-list mb-0" *ngIf="stageList && stageList.length>0">
+          <li class="col-xs-12 col-sm-2 my-2 pe-0">
+            <div
+              class="rounded p-3 d-flex align-items-center justify-content-between shadow-sm cursor-pointer  fw-semibold "
+              style="background-color: #5d9bfb; color:#fff;">
+              {{ dynamicForm.applicationFormInfo.formType == FormType.Candidate ? 'Personal Information':  dynamicForm.applicationFormInfo.formType == FormType.RererenceCheck ? 'Referee Information':'Client Information'}}
+              <i aria-hidden="true" class="fa fa-check-circle ms-auto me-0 fs-6"></i>
+            </div>
+          </li>
+          <li *ngFor="let item of stageList; let num=index" class="col-xs-12 col-sm-2 my-2 pe-0"
+            (click)="scrollView(item.formStageId)">
+            <div
+              class="rounded p-3 d-flex align-items-center justify-content-between shadow-sm cursor-pointer fw-semibold text-gray-300 bg-white">
+              {{ item.stageName == 'Withholding Declaration' ? 'Update(s) to Bank, Tax, Super' : item.stageName }} <i
+                aria-hidden="true" class="fa fa-check-circle ms-auto me-0 text-light-green fs-6"></i>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </ng-template>
+    <div class="px-2">
+      <hr class="border-gray-50 my-4" />
+    </div>
+
+    <!-- Personal Info -->
+    <div class="rgstrtn-frm-mdl {{(!isViewTemplate && dynamicForm.applicationFormInfo.formType != FormType.RererenceCheck)?'section-disable':''}}">
+      <app-personal-information *ngIf="dynamicForm.applicationFormInfo.formType == FormType.Candidate" id="personalInfo"
+        [dynamicForm]="dynamicForm"></app-personal-information>
+      <app-referee-information *ngIf="dynamicForm.applicationFormInfo.formType == FormType.RererenceCheck" id="referenceInfo"
+        [dynamicForm]="dynamicForm"></app-referee-information>
+      <app-client-information *ngIf="dynamicForm.applicationFormInfo.formType == FormType.Client" id="personalInfo"
+        [dynamicForm]="dynamicForm"></app-client-information>
+    </div>
+
+    <!-- FormView -->
+    <div class="p-1" *ngIf="stages && stages.length > 0">
+      <div class="" id="stage-{{stage.formStageId}}" *ngFor="let stage of stages;let stageIdx = index">
+        <div class="mb-4 bg-white border">
+          <div class="d-flex align-items-center justify-content-between py-3 px-4 border-bottom" style="background-color: #fcfdfd;">
+            <h4 class="fw-semibold h6 mb-0 text-gray-100 lh-lg">
+              {{stage.stageName == 'Withholding Declaration' ? 'Update(s) to Bank, Tax, Super' : stage.stageName }}</h4>
+            <div class="ms-auto">
+              <div
+                *ngIf="dynamicForm.isDisplayPayrollPackToggle && (stage.stageName =='Payroll Pack' || stage.stageName =='Payroll Form')"
+                class="d-flex flex-wrap align-items-center ">
+                <p class="me-3 is-pty-switch-txt my-1">
+                  I'd like to be paid as
+                </p>
+                <div class="is-pty-switch {{dynamicForm.applicationFormCountry=='NZ'?'NZ-pty':''}}">
+                  <input type="checkbox" class="checkbox" [value]="isPty" (change)="isPty = !isPty">
+                  <div class="knobs" *ngIf="dynamicForm.applicationFormCountry == 'AU'">
+                    <span>PAYG</span>
+                  </div>
+                  <div class="knobs" *ngIf="dynamicForm.applicationFormCountry == 'NZ'">
+                    <span>PAYE</span>
+                  </div>
+                  <div class="layer"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="">
+            <ng-container *ngFor="let section of stage.sections; let sectionIdx = index">
+              <div
+                *ngIf="!restrictedSectionsForView.includes(section.sectionName.toLowerCase()) && isPtySection(stage.stageName, section)"
+                class="px-4 py-3 {{stage.stageName == 'Withholding Declaration' && section.sectionName == 'Update(s) to Bank, Tax, Super' ? 'pb-0':'' }} ">
+                <div *ngIf="isSectionHeadingVisible(stage,section)" class="d-flex align-items-center mb-4">
+                  <div>
+                    <div class="section-{{section.formSectionId}} d-flex {{!isViewTemplate && editableSectionId == section.formSectionId && isValidSectionToManage(section.sectionName, stage.stageName)?'label-info-row mb-4':''}} position-relative"
+                    (click)="editableSectionId == section.formSectionId ?  editableSectionId = -1: isValidSectionToManage(section.sectionName, stage.stageName) ?  editableSectionId = section.formSectionId : ''; editableStageId = -1; editableFieldId=-1; editableCheckId = -1;">
+                      <h5 class="pointer-class fw-semibold mb-0 text-gray-300 fs-7 d-flex align-items-center">
+                        <i class="fa fa-sort-desc me-2 fs-5 va-sup"></i>
+                        <span>{{section.sectionName}}</span>
+                        <!-- <span>{{section.maxColumn}}</span> -->
+                      </h5>
+                      <div *ngIf="!isViewTemplate && editableSectionId == section.formSectionId && isValidSectionToManage(section.sectionName, stage.stageName)" class="position-absolute label-info-icon">
+                        <button *ngIf="isValidSectionToManage(section.sectionName, stage.stageName ,2)" class="icon-btn text-light bg-danger bg-opacity-75 border-0 mx-1 p-0" (click)="deleteActionOnSection(section.formSectionId)">
+                          <span class="fa fa-trash" aria-hidden="true"></span></button>
+                        <button *ngIf="isValidSectionToManage(section.sectionName, stage.stageName ,3)" class="icon-btn text-light bg-secondary border-0 mx-1 me-0 p-0" (click)="currentDnDModelId = stage.formStageId">
+                          <svg height="14" width="14" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" fill="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M9.9 6.417a1 1 0 0 1-.9.571H6V17a1 1 0 0 1-2 0V6.988H1a1 1 0 0 1-.9-.571.983.983 0 0 1 .12-1.051l4-5.006a1.024 1.024 0 0 1 1.56 0l4 5.006a.983.983 0 0 1 .12 1.051zm8 5.166a1 1 0 0 0-.9-.571h-3V1a1 1 0 0 0-2 0v10.012H9a1 1 0 0 0-.9.571.983.983 0 0 0 .12 1.051l4 5.006a1.024 1.024 0 0 0 1.56 0l4-5.006a.983.983 0 0 0 .12-1.051z" fill="#ffffff" fill-rule="evenodd"></path> </g></svg>
+                        </button>
+                        <button *ngIf="isValidSectionToManage(section.sectionName, stage.stageName ,1)" class="icon-btn text-light bg-primary border-0 mx-1 me-0 p-0" (click)="editActionOnSection(stage.formStageId, section.formSectionId)">
+                          <span class="fa fa-cog" aria-hidden="true"></span></button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="ms-auto">
+                    <button *ngIf="section.sectionName.toLowerCase() =='most recent job'" class="btn "
+                      style="background-color: #616e81; color: #fff;">
+                      <i aria-hidden="true" class="fa fa-plus-square me-2"></i>Add
+                    </button>
+                  </div>
+                </div>
+                <ng-container [ngSwitch]="true">
+                  <app-withholding-declaration *ngSwitchCase="stage.stageName=='Withholding Declaration'"
+                    [section]="section" [stage]="stage" [dynamicForm]="dynamicForm"></app-withholding-declaration>
+                  <app-payroll-pack
+                    *ngSwitchCase="dynamicForm.applicationFormCountry.toUpperCase() != 'UK' && (['Payroll Form','Payroll Pack','PayrollPack'].includes(stage.stageName) || ['ServiceForm', 'StatutoryDeclarationAUS', 'StatutoryDeclarationOverSeas'].includes(section.sectionKeyName))"
+                    [section]="section" [stage]="stage" [dynamicForm]="dynamicForm" [isPty]="isPty">
+                  </app-payroll-pack>
+                  <app-payroll-pack-uk
+                    *ngSwitchCase="dynamicForm.applicationFormCountry.toUpperCase() == 'UK' && stage.stageName=='Payroll Pack'"
+                    [section]="section" [stage]="stage" [dynamicForm]="dynamicForm" [isPty]="isPty">
+                  </app-payroll-pack-uk>
+                  <app-work-history
+                    *ngSwitchCase="stage.stageName=='Work History' && section.sectionName.toLowerCase() =='most recent job'">
+                  </app-work-history>
+                  <app-contact-card
+                    *ngSwitchCase="dynamicForm.applicationFormInfo.formType == FormType.Client && stage.stageName=='Contact' && section.sectionName.toLowerCase() =='contact'">
+                  </app-contact-card>
+                  <app-section-rows *ngSwitchDefault [dynamicForm]="dynamicForm"
+                    [isEditable]="!isViewTemplate && isValidForEditSection(stage.stageName)" [section]="section"
+                    [stage]="stage" [editableFieldId]="editableFieldId" [editableCheckId]="editableCheckId"
+                    (addNewSection) = "addNewSectionAction($event)"
+                    (updateDynamicForm)="retriveUpdateForDynamicForm($event)"
+                    (updateEditSettings)="retriveEditSettings($event)"
+                    (updateCheckSettings)="retriveEditCheckSettings($event)"
+                    (updateForm)="retriveSaveFormChanges($event)">
+                  </app-section-rows>
+                </ng-container>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Scroll to top -->
+    <div class="scroll-to-top {{ scrollTopIconVisible ? 'show-scroll' : ''}}"><button (click)="scrollToTop()"><i
+          class="fa fa-chevron-up"></i></button></div>
+  </div>
+
+  <!-- FormView Ended -->
+</div>
+<ng-container *ngIf="editableIdForStageSectionSidebar != -1">
+  <app-stage-section-prop-sidebar
+    [isSubSectionSidebar] = "isSubSectionSidebar" [model]="getStageOrSectionModel()" [modelList]="isSubSectionSidebar ? sectionList : stageList" [sidebarPosition]="sidebarPosition" (updateStageSidebar)="retriveStageSidebarUpdate($event)"></app-stage-section-prop-sidebar>
+</ng-container>
+
+<ng-container *ngIf="currentDnDModelId != -1">
+  <app-general-drag-n-drop-sidebar [modelList]="getDnDModelList()"  (updateDnDSidebar)="retriveSectionDragDropSidebar($event)"></app-general-drag-n-drop-sidebar>
+</ng-container>
+
+<ng-container *ngIf="isFieldsetSidebar">
+  <app-fieldset-sidebar [dynamicForm]="dynamicForm" [section]="editableSection" [fieldsetCategory]="fieldsetCategory" [isAddFieldset]="false" (updateFieldsetPropChanges)="retriveEditFieldsetChanges($event)"></app-fieldset-sidebar>
+</ng-container>

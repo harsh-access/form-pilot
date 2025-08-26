@@ -1,0 +1,117 @@
+<div *ngIf="section.sectionName =='TFN Declaration Form'" class="payroll-pack-body-class border-0 " >
+  <div [class.d-none]="!(section.sectionName == 'TFN Declaration Form')" class="d-flex justify-content-center py-4 px-sm-2 " style="background-color: #eee;" >
+    <img src="../../assets/img/ScreenShots/TFN.png" alt="TFN" class="img-fluid pdf-view"  >
+  </div>
+  <div id="actionData" class="actions ">
+    <ul aria-label="Pagination" role="menu" class="mb-0 step-action">
+      <li class="save" appDoubleClick >
+        <a>Next</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div *ngIf="section.sectionKeyName =='StatutoryDeclarationAUS'" class="payroll-pack-body-class border-0 " >
+  <div [class.d-none]="!(section.sectionKeyName == 'StatutoryDeclarationAUS')" class="d-flex justify-content-center py-4 px-sm-2 " style="background-color: #eee;" >
+    <img src="../../assets/img/ScreenShots/StatutoryDeclarationAUS.jpeg" alt="StatutoryDeclarationAUS" class="img-fluid pdf-view"  >
+  </div>
+  <div id="actionData" class="actions ">
+    <ul aria-label="Pagination" role="menu" class="mb-0 step-action">
+      <li class="save" appDoubleClick >
+        <a>Next</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div *ngIf="section.sectionKeyName =='StatutoryDeclarationOverSeas'" class="payroll-pack-body-class border-0 " >
+  <div [class.d-none]="!(section.sectionKeyName == 'StatutoryDeclarationOverSeas')" class="d-flex justify-content-center py-4 px-sm-2 " style="background-color: #eee;" >
+    <img src="../../assets/img/ScreenShots/StatutoryDeclarationOverSeas.jpeg" alt="StatutoryDeclarationOverSeas" class="img-fluid pdf-view"  >
+  </div>
+  <div id="actionData" class="actions ">
+    <ul aria-label="Pagination" role="menu" class="mb-0 step-action">
+      <li class="save" appDoubleClick >
+        <a>Next</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div *ngIf="section.sectionKeyName =='ServiceForm'" class="payroll-pack-body-class border-0 " >
+  <div [class.d-none]="!(section.sectionKeyName == 'ServiceForm')" class="d-flex justify-content-center py-4 px-sm-2 " style="background-color: #eee;" >
+    <img src="../../assets/img/ScreenShots/ServiceForm.jpeg" alt="ServiceForm" class="img-fluid pdf-view"  >
+  </div>
+  <div id="actionData" class="actions ">
+    <ul aria-label="Pagination" role="menu" class="mb-0 step-action">
+      <li class="save" appDoubleClick >
+        <a>Next</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div *ngIf="section.sectionName =='Super Choice Form'" class="payroll-pack-body-class border-0">
+  <div [class.display-none]="!(section.sectionName =='Super Choice Form')" class="m-0 p-0">
+    <img src="../../assets/img/ScreenShots/Super.png" alt="super" class="img-fluid m-0 ">
+  </div>
+  <div id="actionData" class="actions ">
+    <ul aria-label="Pagination" role="menu" class="mb-0 step-action ">
+      <li class="save" >
+        <a>Previous</a>
+      </li>
+      <li class="save" >
+        <a>Next</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div *ngIf="section.sectionName =='Bank Details'">
+  <app-section-rows [stage]="stage"  [section]="section" [dynamicForm]="dynamicForm" ></app-section-rows>
+</div>
+
+<div *ngIf="stage.stageName == 'Payroll Form' && section.sectionKeyName =='Kiwi Saver Details' && (this.dynamicForm.defaultPayrollPackType == null? true : !isPty)"
+      class="payroll-pack-body-class border-0">
+  <span class="payroll-instruction text-gray-300">Please complete either the opt in or opt out form. For moreinformation, please
+    <a class="payroll-link text-blue-100" target="_blank" href="https://www.ird.govt.nz/-/media/project/ir/home/documents/forms-and-guides/ir1---ir99/ks3/ks3-09-2020.pdf">click here</a>
+  </span>
+  <div class="d-flex justify-content-center py-4 px-sm-2" style="background-color: #dcdcdc;">
+    <img src="../../assets/img/ScreenShots/kiwisaver.png" alt="kiwisaver" class="img-fluid" style="box-shadow: 0 0 5px 2px rgba(0,0,0,.35);" >
+  </div>
+</div>
+
+<div *ngIf=" stage.stageName == 'Payroll Form' && section.sectionKeyName =='IRD Details' && (this.dynamicForm.defaultPayrollPackType == null? true : !isPty)"
+      class="payroll-pack-body-class border-0">
+  <span class="payroll-instruction text-gray-300"> Please complete the IRD Tax Code Declaration below. If you are unsure what your tax code is or how to complete this form, please
+    <a class="payroll-link text-blue-100" target="_blank" href="https://onboardedstorage.blob.core.windows.net/onboardedlarge-document-upload/Documents/IR330 2024 guide.pdf">click here</a>
+  </span>
+    <div class="d-flex justify-content-center py-4 px-sm-2" style="background-color: #dcdcdc;">
+      <img src="./assets/img/ScreenShots/IRD2024.png" alt="ird" class="img-fluid" style="box-shadow: 0 0 5px 2px rgba(0,0,0,.35);">
+    </div>
+</div>
+
+<div *ngIf=" stage.stageName == 'Payroll Form' && section.sectionKeyName =='Tax Code Declaration' && (this.dynamicForm.defaultPayrollPackType == null? true : isPty)"
+      class="payroll-pack-body-class border-0">
+  <div class="d-flex justify-content-center py-4 px-sm-2" style="background-color: #dcdcdc;">
+    <img src="../../assets/img/ScreenShots/TaxRateDeclaration.png" alt="TaxRateDeclaration" class="img-fluid" style="box-shadow: 0 0 5px 2px rgba(0,0,0,.35);">
+  </div>
+</div>
+
+<div  *ngIf="(this.dynamicForm.defaultPayrollPackType == null? true : isPty) &&
+      [
+        'Company Information',
+        'Registered Company Address',
+        'RCTI (Recipient Created Tax Invoices)',
+        'Contractual Insurance Requirements',
+        'Workcover Insurance Requirements',
+        'Company Bank Information',
+        'CompanyInformation',
+        'Contractual Insurance Requirements'
+      ].includes(section.sectionName)">
+  <app-section-rows [stage]="stage" [section]="section" [dynamicForm]="dynamicForm"></app-section-rows>
+</div>
+
+
+
+
+

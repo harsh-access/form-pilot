@@ -1,0 +1,56 @@
+<div class="vertical-container dark-timeline text-gray-300" id="vertical-timeline">
+  <div class="vertical-timeline-block">
+      <div class="vertical-timeline-icon navy-bg">
+          <img alt="New Applicant" class="pt-1 pe-1 ps-1" src="../../assets/img/applicant-icon.png">
+      </div>
+      <div class="vertical-timeline-content">
+          <h2 class="">{{ applicationFormInfo && applicationFormInfo.formType == 96 ? 'New Application' : 'New Applicant' }}</h2>
+          <span class="vertical-date">
+            {{date | date:'dd/MM/y h:mm:ss a'}} <br>
+              <small></small>
+          </span>
+      </div>
+  </div>
+  <div class="vertical-timeline-block">
+      <div class="vertical-timeline-icon blue-bg">
+          <i class="fa fa-envelope"></i>
+      </div>
+      <div class="vertical-timeline-content">
+          <h2 class="">Invite Sent</h2>
+          <span class="vertical-date">
+              {{date | date:'dd/MM/y h:mm:ss a'}} by Mary Jane <br>
+              <!-- 06/12/2022 11:33:38 PM by Onboard Support <br> -->
+              <small></small>
+          </span>
+      </div>
+  </div>
+  <div class="vertical-timeline-block">
+      <div class="vertical-timeline-icon lazur-bg">
+          <img alt="Onboarding Started" class="pt-1 pe-1 ps-1" src="../../assets/img/time-icon.png">
+      </div>
+      <div class="vertical-timeline-content">
+          <h2 class="">Onboarding Started</h2>
+          <span class="vertical-date"> {{date | date:'dd/MM/y h:mm:ss a'}} <br><small></small></span>
+      </div>
+  </div>
+  <div class="vertical-timeline-block">
+      <div class="vertical-timeline-icon yellow-bg">
+          <img alt="Form Submitted" class="pt-2 pe-1 ps-1" src="../../assets/img/check-icon.png">
+      </div>
+
+      <div class="vertical-timeline-content">
+          <h2 class="">Form Submitted</h2>
+          <span class="vertical-date">{{date | date:'dd/MM/y h:mm:ss a'}} <br><small></small></span>
+      </div>
+  </div>
+  <div class="vertical-timeline-block">
+    <div class="vertical-timeline-icon blue-bg">
+      <i class="fa fa-briefcase"></i>
+    </div>
+
+    <div class="vertical-timeline-content">
+      <h2 class="">{{ applicationFormInfo && applicationFormInfo.formType == 96 ? 'Client Completed': 'Applicant Completed'}}</h2>
+      <span class="vertical-date">{{date | date:'dd/MM/y h:mm:ss a'}} by Mary Jane <br><small></small></span>
+    </div>
+  </div>
+</div>

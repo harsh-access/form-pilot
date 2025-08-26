@@ -1,0 +1,16 @@
+/* You can add global styles to this file, and also import other style files */
+@import url("assets/css/rx-control-design/datepicker.css");
+@import url("assets/css/rx-control-design/dialog.css");
+@import url("assets/css/rx-control-design/popup.css");
+@import url("assets/css/rx-control-design/select.css");
+@import url("assets/css/rx-control-design/spinner.css");
+@import url("assets/css/rx-control-design/tag.css");
+@import url("assets/css/rx-control-design/toast.css");
+@import url("assets/css/rx-control-design/table-filter.css");
+@import url("assets/css/rx-control-design/time.css");
+@import url("assets/css/rx-control-design/tooltip.css");
+@import url("assets/css/rx-control-design/common.css");
+@import url("assets/font-awesome/css/font-awesome.css");
+@import url("assets/css/bootstrap.min.css");
+@import url("assets/css/custom.css");
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');

@@ -1,0 +1,345 @@
+<form [formGroup]="FormGroupToDisplay" class="px-4 FormGroupToDisplay">
+  <ng-container *ngFor="let item of PropList; let propIdx = index">
+    <ng-container [ngSwitch]="true">
+      <div
+        *ngSwitchCase="item.propType=='text' && isActiveTab==(item.propTab ? item.propTab:0) && (item?.propIsVisible ?? true) && (item.attr && item.attr.dependentOn ? getDependent(item.prop) : true)"
+        class="py-4 field_section" [ngClass]="item.attr?.customClass || ''">
+        <label [for]="item.prop+propIdx+uniqueStr" class="form-label">{{item.propLabel}}</label>
+        <input [id]="item.prop+propIdx+uniqueStr" class="form-control rounded" type="text"
+          [placeholder]="item.attr && item.attr.placeholder ? item.attr.placeholder:''" [formControlName]="item.prop">
+        <p *ngIf="item.attr && item.attr.userGuideTxt" [innerHtml]="item.attr.userGuideTxt"
+          class="w-100 mt-3 mb-0 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">
+          Test:</p>
+      </div>
+      <div
+        *ngSwitchCase="item.propType=='miniText' && isActiveTab==(item.propTab ? item.propTab:0) && (item?.propIsVisible ?? true) && (item.attr && item.attr.dependentOn ? getDependent(item.prop) : true)"
+        class="d-flex flex-wrap align-items-center py-4 field_section">
+        <label [for]="item.prop+propIdx+uniqueStr" class="form-label w-75 pe-2 mb-0">{{item.propLabel }}</label>
+        <input [id]="item.prop+propIdx+uniqueStr" class="form-control rounded w-25" type="text"
+          [formControlName]="item.prop">
+        <p *ngIf="item.attr && item.attr.userGuideTxt" [innerHtml]="item.attr.userGuideTxt"
+          class="w-100 mt-3 mb-0 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">
+        </p>
+      </div>
+      <div
+        *ngSwitchCase="item.propType=='miniNumText' && isActiveTab==(item.propTab ? item.propTab:0) && (item?.propIsVisible ?? true) && (item.attr && item.attr.dependentOn ? getDependent(item.prop) : true)"
+        class="d-flex justify-content-between py-4 flex-wrap field_section">
+        <div class="w-75 pe-3">
+          <label [for]="item.prop+propIdx+uniqueStr" class="form-label mb-0 m-2">{{item.propLabel}}</label>
+        </div>
+        <div class="w-25">
+          <input [id]="item.prop+propIdx+uniqueStr" class="form-control rounded" type="number"
+            (keypress)="numberOnly($event)" (touchend)="numberOnly($event)" [formControlName]="item.prop">
+        </div>
+        <p *ngIf="item.attr && item.attr.userGuideTxt" [innerHtml]="item.attr.userGuideTxt"
+          class="w-100 mt-3 mb-0 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">
+        </p>
+      </div>
+      <div
+        *ngSwitchCase="item.propType=='textarea' && isActiveTab==(item.propTab ? item.propTab:0) && (item?.propIsVisible ?? true) && (item.attr && item.attr.dependentOn ? getDependent(item.prop) : true)"
+        class="py-4 field_section" [ngClass]="item.attr?.customClass || ''">
+        <label [for]="item.prop+propIdx+uniqueStr" class="form-label">{{item.propLabel}}</label>
+        <textarea [id]="item.prop+propIdx+uniqueStr" class="form-control rounded" cols="30" rows="4"
+          [formControlName]="item.prop"></textarea>
+        <p *ngIf="item.attr && item.attr.userGuideTxt" [innerHtml]="item.attr.userGuideTxt"
+          class="w-100 mt-3 mb-0 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">
+        </p>
+      </div>
+      <div
+        *ngSwitchCase="item.propType=='select' && isActiveTab==(item.propTab ? item.propTab:0) && (item?.propIsVisible ?? true) && (item.attr && item.attr.dependentOn ? getDependent(item.prop) : true) && (item.attr && item.attr.listArr && item.attr.listArr.length>0)"
+        class="py-4 field_section">
+        <label [for]="item.prop" class="form-label">{{item.propLabel}}</label>
+        <select class="form-select rounded" [id]="item.prop" [formControlName]="item.prop">
+          <option [ngValue]="null">-- select --</option>
+          <option [value]="val.id" *ngFor="let val of item.attr.listArr">{{val.value}}</option>
+        </select>
+        <p *ngIf="item.attr && item.attr.userGuideTxt" [innerHtml]="item.attr.userGuideTxt"
+          class="w-100 mt-3 mb-0 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">
+        </p>
+      </div>
+      <div
+        *ngSwitchCase="item.propType=='rx-select' && isActiveTab==(item.propTab ? item.propTab:0) && (item?.propIsVisible ?? true) && (item.attr && item.attr.dependentOn ? getDependent(item.prop) : true)"
+        class="py-4 field_section" [ngClass]="item.attr?.customClass || ''">
+        <div *ngIf="(item.attr && item.attr.listArr && item.attr.listArr.length>0)">
+          <label [for]="item.prop" class="form-label">{{item.propLabel}}</label>
+          <rx-select mainClass="form-control" selectPlaceholder="Select Item..." [enableFreeText]="false" [text]=""
+            [textObject]="textObject" [formControlName]="item.prop" [(source)]="item.attr.listArr"
+            [keyValueProps]="['value','id']">
+          </rx-select>
+        </div>
+        <ng-container *ngIf="item.attr && item.attr.userGuideTxt">
+          <p *ngIf="item.attr.listArr.length > 0" [innerHtml]="item.attr.userGuideTxt"
+            class="w-100 mt-3 mb-0 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">
+          </p>
+          <p *ngIf="item.attr.listArr.length === 0"
+            class="w-100 mt-3 mb-0 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">
+            Invalid data found. For assistance with the mapping, please reach out to our support team at <a
+              href="mailto:support@onboarded.com.au">support&#64;onboarded.com.au</a>.
+          </p>
+        </ng-container>
+
+
+      </div>
+      <div
+        *ngSwitchCase="item.propType=='checkbox' && isActiveTab==(item.propTab ? item.propTab:0) && (item?.propIsVisible ?? true) && (item.attr && item.attr.dependentOn ? getDependent(item.prop) : true)"
+        class="py-4  field_section">
+        <div class="form-check form-control-lg rounded-0 py-0 align-items-center">
+          <input class="form-check-input" type="checkbox" [id]="item.prop+propIdx+uniqueStr"
+            [formControlName]="item.prop">
+          <label class="form-check-label" [for]="item.prop+propIdx+uniqueStr">{{item.propLabel}}</label>
+        </div>
+        <p *ngIf="item.attr && item.attr.userGuideTxt" [innerHtml]="item.attr.userGuideTxt"
+          class="w-100 mt-3 mb-0 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">
+        </p>
+      </div>
+      <div
+        *ngSwitchCase="item.propType=='switch' && isActiveTab==(item.propTab ? item.propTab:0) && (item?.propIsVisible ?? true) && (item.attr && item.attr.dependentOn ? getDependent(item.prop) : true)"
+        class="py-4 pe-0 field_section form-check rounded-0 form-switch form-check-reverse form-control-lg  text-start"
+        [ngClass]="item.attr?.customClass || ''">
+        <input class="form-check-input me-0" type="checkbox" role="switch" [id]="item.prop+propIdx+uniqueStr"
+          [formControlName]="item.prop">
+        <label class="form-check-label w-75" [for]="item.prop+propIdx+uniqueStr">{{item.propLabel}}</label>
+        <p *ngIf="item.attr && item.attr.userGuideTxt" [innerHtml]="item.attr.userGuideTxt"
+          class="w-100 mt-3 mb-0 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">
+        </p>
+      </div>
+      <div
+        *ngSwitchCase="item.propType=='range' && isActiveTab==(item.propTab ? item.propTab:0) && (item?.propIsVisible ?? true) && (item.attr && item.attr.dependentOn ? getDependent(item.prop) : true)"
+        class="field_section d-flex justify-content-between py-4 flex-wrap">
+        <label [for]="item.prop+propIdx+uniqueStr" class="form-label w-100">{{item.propLabel}}</label>
+        <div class="w-75 pe-3">
+          <input [id]="item.prop+propIdx+uniqueStr" type="range" class="form-range mt-2" data-bs-toggle="tooltip"
+            data-bs-placement="top" data-bs-title="Tooltip on top" min="0" max="12" step="1"
+            [formControlName]="item.prop">
+        </div>
+        <div class="w-25">
+          <input class="form-control rounded bg-opacity-10" style="background-color: #eeeeee85;"
+            [id]="'rangeTxt_'+item.prop" maxlength="2" type="text" [value]="FormGroupToDisplay.value[item.prop]"
+            readonly />
+        </div>
+        <p *ngIf="item.attr && item.attr.userGuideTxt" [innerHtml]="item.attr.userGuideTxt"
+          class="w-100 mt-3 mb-0 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">
+        </p>
+      </div>
+      <div
+        *ngSwitchCase="item.propType=='radioBtnPair' && isActiveTab==(item.propTab ? item.propTab:0) && (item?.propIsVisible ?? true) && (item.attr && item.attr.dependentOn ? getDependent(item.prop) : true)"
+        class="field_section d-flex flex-wrap py-4">
+        <div class="me-3">
+          <input type="radio" class="btn-check" [value]="item.attr.listArr[0].id" [id]="item.attr.listArr[0].id"
+            [formControlName]="item.prop">
+          <label class="btn btn-outline-primary rounded-pill px-5"
+            [for]="item.attr.listArr[0].id">{{item.attr.listArr[0].value}}</label>
+        </div>
+        <div>
+          <input type="radio" class="btn-check" [value]="item.attr.listArr[1].id" [id]="item.attr.listArr[1].id"
+            [formControlName]="item.prop">
+          <label class="btn btn-outline-secondary rounded-pill px-5"
+            [for]="item.attr.listArr[1].id">{{item.attr.listArr[1].value}}</label>
+        </div>
+        <p *ngIf="item.attr && item.attr.userGuideTxt" [innerHtml]="item.attr.userGuideTxt"
+          class="w-100 mt-3 mb-0 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">
+        </p>
+      </div>
+      <div
+        *ngSwitchCase="item.propType=='radioGrp' && isActiveTab==(item.propTab ? item.propTab:0) && (item?.propIsVisible ?? true) && (item.attr && item.attr.dependentOn ? getDependent(item.prop) : true)"
+        class="field_section d-flex py-4 flex-wrap">
+        <label [for]="'rdbGrp_'+item.prop+propIdx+uniqueStr" class="form-label w-100">{{item.propLabel}}</label>
+        <div class="row w-100" *ngIf="item.attr.listArr.length>0">
+          <div class="col-6" *ngFor="let lkp of item.attr.listArr;let isOdd = odd">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" [value]="lkp.id" [id]="item.prop+propIdx+uniqueStr+lkp.id"
+                [formControlName]="item.prop">
+              <label class="form-check-label" [for]="item.prop+propIdx+uniqueStr+lkp.id">{{lkp.value}}</label>
+            </div>
+          </div>
+        </div>
+        <p *ngIf="item.attr && item.attr.userGuideTxt" [innerHtml]="item.attr.userGuideTxt"
+          class="w-100 mt-2 mb-0 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">
+        </p>
+      </div>
+      <div
+        *ngSwitchCase="item.propType=='optionBox' && isActiveTab==(item.propTab ? item.propTab:0) && (item?.propIsVisible ?? true) && (item.attr && item.attr.dependentOn ? getDependent(item.prop) : true)"
+        class="py-4 field_section">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <label [for]="item.prop+propIdx+uniqueStr" class="form-label">{{item.propLabel}} |
+            {{FormGroupToDisplay.get(item.prop).length}}</label>
+          <span class="badge bg-secondary font-sm pointer-class lh-1 mb-1" (click)="addNewOption(item.prop)">Add <i
+              class="fa fa-plus ms-1" aria-hidden="true"></i></span>
+        </div>
+        <p *ngIf="item.attr && item.attr.userGuideTxt" [innerHtml]="item.attr.userGuideTxt"
+          class="w-100 mb-3 mb-0 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">
+        </p>
+        <ng-container [formArrayName]="item.prop">
+          <ng-container *ngFor="let con of FormGroupToDisplay.get(item.prop).controls; let optionIdx = index">
+            <div class="d-flex" [formGroupName]="optionIdx">
+              <input class="form-control rounded mb-1" type="text" formControlName="value">
+              <button type="button" (click)="FormGroupToDisplay.get(item.prop).removeAt(optionIdx)"
+                class="btn-close ms-2 mt-1" aria-label="Close"></button>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+      <div
+        *ngSwitchCase="item.propType=='fileUpload' && isActiveTab==(item.propTab ? item.propTab:0) && (item?.propIsVisible ?? true) && (item.attr && item.attr.dependentOn ? getDependent(item.prop) : true)"
+        class="py-4 field_section file_upload" [ngClass]="item.attr?.customClass || ''">
+        <label [for]="item.prop+propIdx+uniqueStr" class="form-label">{{item.propLabel}}</label>
+        <div class="px-4 py-4 rounded text-center upload_progress">
+          <div class="{{isFileUploaded(item.prop)?'d-flex w-100':'d-none'}}">
+            <img src="assets/img/file-new.svg" alt="upload-file" class="prev_img me-2">
+            <div class="text-gray-400 fw-bold right_cont">
+              <div class="d-flex justify-content-between">
+                <p class="mb-0">{{ getFileName(item.prop) }}</p>
+                <div class="ms-auto">
+                  <!-- We don't need to download excel sheet that we have just uploaded but keeping the code as comment for future use' -->
+                  <!-- <span class="btn btn-sm btn-outline-secondary border-0" (click)="downloadFile(item.prop)"><i class="fa fa-download" aria-hidden="true" title="Download"></i></span> -->
+                  <button type="button" (click)="removeFileUrl(item.prop)" class="ms-2 btn-close fw-bold"
+                    aria-label="Close"></button>
+                </div>
+              </div>
+              <div>
+                <hr class="w-100 my-1 border-top-2" />
+              </div>
+              <p class="mb-0 text-start">Completed</p>
+            </div>
+          </div>
+          <div class="{{isFileUploaded(item.prop)?'d-none':''}}">
+            <p class="text-center">Upload a document</p>
+            <div class="btn btn-dark m-auto position-relative">Upload document
+              <input type="file" accept=".xlsx" class="file-upld-custom" (change)="onFileChange($event, item)">
+            </div>
+          </div>
+        </div>
+        <p *ngIf="item.attr && item.attr.userGuideTxt && !this.isLicenceSection" [innerHtml]="item.attr.userGuideTxt"
+          class="w-100 mt-3 mb-0 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">
+        </p>
+        <p class="w-100 mt-3 mb-0 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">
+          To begin, download the Excel template by clicking the <a
+            href='https://onboardedstorage.blob.core.windows.net/onboardedlarge-document-upload/Demo/documents/Ticket&Licences - V1.xlsx'
+            target='_blank'>Download Template</a> link.
+          Fill in the required information, and then upload the completed Excel file using the "Upload" button above.
+          This will
+          enable us to generate your skills, tickets, and licenses based on your
+          input. Use <a class="link-style" style="cursor: pointer;" (click)="downloadTicketLicencesData()">this</a> link
+          to
+          access the ATS/CRM
+          mapping.
+        </p>
+      </div>
+      <div
+        *ngSwitchCase="item.propType=='selectOptionBox' && isActiveTab==(item.propTab ? item.propTab:0) && (item?.propIsVisible ?? true) && (item.attr && item.attr.dependentOn ? getDependent(item.prop) : true)"
+        class="py-4 field_section" [ngClass]="item.attr?.customClass || ''">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <label [for]="item.prop+propIdx+uniqueStr" class="form-label">{{item.propLabel}} |
+            {{FormGroupToDisplay.get(item.prop + '.options').length}}</label>
+
+          <div *ngIf="FormGroupToDisplay.get(item.prop).errors" class="form-label-alert">
+            <i class="fa fa-exclamation-circle"></i>
+            <ng-container [ngSwitch]="true">
+              <ng-container *ngSwitchCase="FormGroupToDisplay.get(item.prop).errors?.['UniqueOption']">
+                Each option should be unique.
+              </ng-container>
+              <ng-container *ngSwitchCase="FormGroupToDisplay.get(item.prop).errors?.['EmptyOption']">
+                Provide all Options.
+              </ng-container>
+              <ng-container *ngSwitchCase="FormGroupToDisplay.get(item.prop).errors?.['SelectedOpt']">
+                Highlight the Right Answer.
+              </ng-container>
+            </ng-container>
+          </div>
+          <span class="induction-plus-btn pointer-class" (click)="addFieldOption(item.prop)">
+            <i class="fa fa-plus-circle me-2 ms-1" aria-hidden="true"></i></span>
+        </div>
+        <p *ngIf="item.attr && item.attr.userGuideTxt" [innerHtml]="item.attr.userGuideTxt"
+          class="w-100 mb-3 mb-0 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">
+        </p>
+        <div [formGroupName]="item.prop">
+          <div class="d-flex"
+            *ngFor="let option of FormGroupToDisplay.get(item.prop + '.options').controls; let optionIdx = index">
+            <div class="field-option">
+              <input type="radio" class="form-check-input" [value]="option.value.id"
+                [id]="item.prop+propIdx+uniqueStr+optionIdx" formControlName="selectedOpt"
+                [disabled]="FormGroupToDisplay.get(item.prop + '.options').errors != null">
+              <label [for]="item.prop+propIdx+uniqueStr+optionIdx"><i class="fa fa-check-circle"></i></label>
+            </div>
+            <ng-container formArrayName="options">
+              <ng-container [formGroupName]="optionIdx">
+                <input class="form-control rounded mb-1" type="text" formControlName="value" placeholder="Enter option">
+                <button type="button" (click)="removeFieldOption(item.prop, optionIdx)" class="btn-close ms-2 mt-1"
+                  aria-label="Close"></button>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+      <div
+        *ngSwitchCase="item.propType=='nestedSet' && isActiveTab==(item.propTab ? item.propTab:0) && (item?.propIsVisible ?? true) && (item.attr && item.attr.dependentOn ? getDependent(item.prop) : true)"
+        class="py-4 field_section" [ngClass]="item.attr?.customClass || ''">
+        <div class="align-items-center justify-content-between mb-2">
+          <ng-container [formArrayName]="item.prop">
+            <ng-container
+              *ngFor="let nestedGroup of FormGroupToDisplay.get(item.prop).controls; let nestedGroupIdx = index">
+              <div class="nested-comp-border" [formGroupName]="nestedGroupIdx">
+                <div class="d-flex justify-content-between">
+                  <label class="form-label nested-comp-border-label">{{item.propLabel}} | {{nestedGroupIdx + 1}}</label>
+                  <button class="btn-red px-3 py-2 ms-2 hover-bg-none"
+                    (click)="removeNestedSet(item.prop, nestedGroupIdx)"><i aria-hidden="true"
+                      class="pe-1 fa fa-trash custom-red fs-4"></i> </button>
+                </div>
+                <app-sidebar-prop-formgroup [FormGroupToDisplay]="nestedGroup" [PropList]="item.nestedProps"
+                  [uniqueStr]="uniqueStr+propIdx+nestedGroupIdx+1" [filesContainer]="filesContainer"
+                  (outputFilesContainerChanged)="onChildFilesContainerChanged($event)"></app-sidebar-prop-formgroup>
+              </div>
+            </ng-container>
+          </ng-container>
+          <span class="badge bg-secondary font-sm pointer-class lh-1 mb-1 mt-2" (click)="addAnotherSet(item.prop)">Add
+            <i class="fa fa-plus ms-1" aria-hidden="true"></i></span>
+        </div>
+        <p *ngIf="item.attr && item.attr.userGuideTxt" [innerHtml]="item.attr.userGuideTxt"
+          class="w-100 mb-3 mb-0 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">
+        </p>
+
+      </div>
+      <div
+        *ngSwitchCase="item.propType=='dependentSelectionPair' && isActiveTab==(item.propTab ? item.propTab:0) && (item?.propIsVisible ?? true) && (item.attr && item.attr.dataObject && item.attr.dataObject != {} && (item.attr.dependentOn ? getDependent(item.prop) : true))  "
+        class="py-4 field_section" [ngClass]="item.attr?.customClass || ''">
+        <label *ngIf="item.propLabel" [for]="item.prop" class="form-label">{{item.propLabel }}</label>
+        <p class="w-100 mb-3 bg-dark bg-opacity-10 py-2 px-3 rounded font-sm lh-base font-open-sans text-gray-400">{{
+          !item.attr.userGuideTxt && 'Apply these settings to introduce conditional logic to your form. Conditional
+          logic allows you to change what the user sees depending on the field they select.'}}</p>
+        <div>
+          <div class="d-flex justify-content-between align-items-center">
+            <label class="form-label">Show When</label>
+            <button *ngIf="field?.dependentFormFieldColumns.length > 0" class="btn btn-sm border-0 fs-5 text-danger"
+              (click)="setDepencyStatus(item.prop, FormGroupToDisplay.value[item.prop])">
+              <span class="fa fa-trash"></span>
+            </button>
+          </div>
+          <div class=" {{ !FormGroupToDisplay.value[item.prop]['dependencyStatus'] ? 'cursor-not-allowed' : ''}}">
+            <select
+              class="form-select rounded {{ !FormGroupToDisplay.value[item.prop]['dependencyStatus'] ? 'section-disable' : ''}}"
+              [id]="item.prop + 'refFormFieldId'"
+              (change)="dependentSelectionPairValueChange($event.target.value, item.prop, 'refFormFieldId', 'refValue')">
+              <option [value]="null" selected>-- Question --</option>
+              <option value="{{val.formFieldId}}" class="d-inline-block text-truncate" [title]="val.labelName"
+                *ngFor="let val of item.attr.dataObject.refFormFieldId"
+                [selected]="FormGroupToDisplay.value[item.prop]['refFormFieldId'] == val.formFieldId">{{ val.labelName
+                && val.labelName.length > 60 ? val.labelName.substring(0, 60) + '...' : val.labelName}}</option>
+            </select>
+            <p class="form-label my-2 fw-semibold text-start {{ !FormGroupToDisplay.value[item.prop]['dependencyStatus'] ? 'section-disable' : ''}}"
+              style="cursor: default;">Equals to</p>
+            <select
+              class="form-select rounded {{ !FormGroupToDisplay.value[item.prop]['dependencyStatus'] ? 'section-disable' : ''}}"
+              [id]="item.prop + 'refValue'"
+              (change)="dependentSelectionPairValueChange($event.target.value, item.prop, 'refValue')">
+              <option [value]="null" selected>-- Answer --</option>
+              <ng-container *ngIf="item.attr.dataObject.refValue.length  > 0">
+                <option [value]="val.id" *ngFor="let val of item.attr.dataObject.refValue"
+                  [selected]="FormGroupToDisplay.value[item.prop]['refValue'] == val.id">{{val.value}}</option>
+              </ng-container>
+            </select>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+</form>
