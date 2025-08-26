@@ -2,6 +2,7 @@
 {
     public class SectionDto
     {
-        public string SectionName { get; set; }
+        public required string SectionName { get; set; }
+        public int OrderNo { get; set; }
     }
 }

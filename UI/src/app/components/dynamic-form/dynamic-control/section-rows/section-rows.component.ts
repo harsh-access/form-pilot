@@ -1,16 +1,12 @@
 import { ChangeDetectorRef, Component, ComponentFactoryResolver, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { RxPopup, RxToast } from '@rx/view/index';
 import { YesNoPopupComponent } from 'src/app/components/shared/custom-control/yes-no-popup/yes-no-popup.component';
-import { DynamicForm, SubSection, Section, FormField } from 'src/app/view-modal/DynamicFormModel';
+import { DynamicForm, Section, SubSection, FormField, Columns, Rows, Sections, Stages } from 'src/app/view-modal/DynamicFormModel';
 import { getControlCategoryList, IControlCategory } from '../dynamic-common-data/control-category-function';
 import { crudChangeObj } from '../dynamic-common-data/crud-changes';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { OnboardedObjects } from 'src/app/Enums/FieldIntegration.enum';
 import { OnboardedObjectTypes } from '../../Sidebars/fieldset-sidebar/fieldset-propertyList-functions';
 import { FieldTypeEnum } from 'src/app/Enums/FieldType.enum';
-import { BackgroundCheckService } from '../../background-check.service';
-import { IBackgorundCheck } from '../../Sidebars/backgroundcheck-sidebar/backgroundcheck-propertyList-functions';
-import { BackgroundCheckEnum } from 'src/app/Enums/BackgroundCheck.enum';
 
 @Component({
   selector: 'app-section-rows',
@@ -20,8 +16,8 @@ export class SectionRowsComponent implements OnInit {
 
 
   @Input() dynamicForm !: DynamicForm;
-  @Input() stage !: Section;
-  @Input() section !: SubSection;
+  @Input() stage !: Stages;
+  @Input() section !: Sections;
   @Input() isEditable: boolean = false;
   @Input() dependentFieldArr: any[] = [];
   @Input() editableFieldId: number = -1;
@@ -43,9 +39,6 @@ export class SectionRowsComponent implements OnInit {
   dndEnabledIdForSectionFields: number = -1;
   isFieldsetSidebar: boolean = false;
 
-  isBackgroundCheckSidebar: boolean = false;
-  isAddBackgroundCheckSidebar: boolean = false;
-  checkCategory: number = 0;
   currentDnDModelId: number = -1;
   isVideoSection: boolean = false;
   videoSafePath: SafeResourceUrl = null;
@@ -53,9 +46,9 @@ export class SectionRowsComponent implements OnInit {
   isUBCSection: boolean = false; // Universal Background Check
   isSupportUser: boolean = false;
 
-  refColumnList: Array<FormField> = [];
+  refColumnList: Array<Columns> = [];
   isEditPropWindowVisible: boolean = false;
-  selectedEditField !: FormField;
+  selectedEditField !: Columns;
   showInStart: boolean = false;
   formFieldIdsList: Array<number> = [];
   fieldTypeList: IControlCategory[];
@@ -65,15 +58,20 @@ export class SectionRowsComponent implements OnInit {
 
   constructor(
     private ref: ChangeDetectorRef,
-    public popup: RxPopup,
-    private toast: RxToast,
-    private sanitizer: DomSanitizer,
-    public _backgroundCheckService: BackgroundCheckService
+    private sanitizer: DomSanitizer
   ) {
   }
 
   async ngOnInit() {
     this.generalPreparationMethod();
+    this.checkForVideoSection();
+    this.isSupportUser = this.checkSupportUser();
+
+    (this.section.sectionKeyName == 'ONBD-Background-Checks') ? this.isUBCSection = true : this.isUBCSection = false;
+    if (this.isUBCSection) {
+    }
+
+    this.isInProjectClient = this.dynamicForm.isInProjectClient;
     this.isShowComponent = true;
   }
 
@@ -103,6 +101,25 @@ export class SectionRowsComponent implements OnInit {
     return false; // Default return for non-support users or missing data
   }
 
+  IsRecruiterSection() {
+    return typeof this.stage.stageName === "string" && this.stage.stageName.includes("Recruiter")
+  }
+
+  checkForVideoSection() {
+    this.isVideoSection = this.section.videos && this.section.videos.length > 0;
+    if (this.isVideoSection) {
+      this.videoSafePath = this.sanitizer.bypassSecurityTrustResourceUrl(this.section.videos[0].videoPath);
+      let counter = 1;
+      this.section.rows.forEach(row => {
+        row.columns.forEach(col => {
+          if (col.videoId > 0) {
+            col.videoIndCtr = counter;
+            counter++;
+          }
+        });
+      });
+    }
+  }
 
   ngAfterContentChecked() {
     this.ref.detectChanges();
@@ -111,173 +128,185 @@ export class SectionRowsComponent implements OnInit {
   /** Template Methods  **/
 
   addNewSectionAction() {
-    this.addNewSection.emit(this.stage.id);
+    if (this.IsRecruiterSection()) {
+      console.log('You cannot perform this operation in this section.');
+      return;
+    }
+    this.addNewSection.emit(this.stage.formStageId);
   }
 
+
   addFieldsetAction(category: number) {
+    if (this.IsRecruiterSection()) {
+      console.log('You cannot perform this operation in this section.');
+      return;
+    }
     this.fieldsetCategory = category;
     this.isFieldsetSidebar = true;
     this.isAddFieldsetSidebar = true;
     this.selectedEditField = undefined
   }
 
-  // isDependentField(field: FormField) {
+  isDependentField(field: Columns) {
 
-  //   if (field.dependentFormFieldColumns.length < 1) return true;
+    if (field.dependentFormFieldColumns.length < 1) return true;
 
-  //   let dependencyInfo = field.dependentFormFieldColumns[0];
-  //   let refField = this.refColumnList.find(x => x.formFieldId == dependencyInfo.refFormFieldId)
+    let dependencyInfo = field.dependentFormFieldColumns[0];
+    let refField = this.refColumnList.find(x => x.formFieldId == dependencyInfo.refFormFieldId)
 
-  //   if (!this.isDependentField(refField)) {
-  //     field.isHide = true;
-  //     return false;
-  //   };
+    if (!this.isDependentField(refField)) {
+      field.isHide = true;
+      return false;
+    };
 
-  //   switch (true) {
-  //     case (dependencyInfo.refValue == refField?.value && dependencyInfo.action == 'Show'):
-  //       field.isHide = false;
-  //       return true;
-  //       break;
-  //     case (dependencyInfo.refValue != refField?.value && dependencyInfo.action == 'Hide'):
-  //       field.isHide = false;
-  //       return true;
-  //       break;
-  //     default:
-  //       field.isHide = true;
-  //       return false;
-  //       break;
-  //   }
-  // }
+    switch (true) {
+      case (dependencyInfo.refValue == refField?.value && dependencyInfo.action == 'Show'):
+        field.isHide = false;
+        return true;
+        break;
+      case (dependencyInfo.refValue != refField?.value && dependencyInfo.action == 'Hide'):
+        field.isHide = false;
+        return true;
+        break;
+      default:
+        field.isHide = true;
+        return false;
+        break;
+    }
+  }
 
-  // getHiddenClass(row: Rows) {
-  //   return row.columns.filter(x => x.isHide != true).length > 0 ? ' ' : 'd-none'
-  // }
+  getHiddenClass(row: Rows) {
+    return row.columns.filter(x => x.isHide != true).length > 0 ? ' ' : 'd-none'
+  }
 
   addFieldAction(controltype: string) {
+    if (this.IsRecruiterSection() && controltype != "ClientReport") {
+      console.log('You cannot perform this operation in this section.');
+      return;
+    }
 
-    // let field = this.prepareFieldObject(controltype);
-    // this.anyControlSpecificSetup(field);
+    let field = this.prepareFieldObject(controltype);
+    this.anyControlSpecificSetup(field);
 
-    // if (controltype == "ClientReport") {
-    //   field.fieldClass = 'd-none';
-    //   field.labelName = 'Report Name';
-    // }
+    if (controltype == "ClientReport") {
+      field.fieldClass = 'd-none';
+      field.labelName = 'Report Name';
+    }
 
-    // this.AddFieldInTemplate(field);
-    // // this.setAddMainChanges(field);
-    // console.log("onADD", crudChangeObj["ADD"]);
-    // // this.editableFieldId = field.id;
+    this.AddFieldInTemplate(field);
+    // this.setAddMainChanges(field);
+    console.log("onADD", crudChangeObj["ADD"]);
+    // this.editableFieldId = field.formFieldId;
 
-    // if (controltype != "ClientReport") {
-    //   this.updateEditSettings.emit({ formFieldId: field.id })
-    // }
+    if (controltype != "ClientReport") {
+      this.updateEditSettings.emit({ formFieldId: field.formFieldId })
+    }
 
 
     this.isAddFieldSidebar = true;
-    // this.selectedEditField = field;
-    this.isEditPropWindowVisible = true;
-  }
-
-  editPropAction(field: FormField) {
-    let obj = this.fieldTypeList.find(x => x.controls.includes(FieldTypeEnum[field.type]));
-    if (obj == null || !obj) {
-      this.toast.show('Sorry! you cannot edit this field', { status: 'info' });
-      return;
-    }
     this.selectedEditField = field;
     this.isEditPropWindowVisible = true;
   }
 
-  editCheckAction(id: number) {
-    this.isBackgroundCheckSidebar = true;
-    this.isAddBackgroundCheckSidebar = false;
-    this.checkCategory = id;
+  editPropAction(field: Columns) {
+    let obj = this.fieldTypeList.find(x => x.controls.includes(field.controlType));
+    if (obj == null || !obj) {
+      console.log('Sorry! you cannot edit this field');
+      return;
+    }
+
+    this.selectedEditField = field;
+
+    if (field.objectType == OnboardedObjectTypes.licencename) {
+      this.isFieldsetSidebar = true;
+      this.isAddFieldsetSidebar = false;
+      this.fieldsetCategory = 1;
+      return;
+    }
+
+    this.isEditPropWindowVisible = true;
   }
+
 
   deleteCheckAction(id: number) {
-    this.popup.show(YesNoPopupComponent, { bodyMessage: 'Are you sure you want to delete this Check?', buttonUIProps: { yes: { text: 'Delete', color: 'custom-red-bg' }, no: { text: 'Cancel', color: 'bg-primary bg-opacity-75 custom-blue-bg' } } }).then(t => {
-      if (!t.isConfirm) return;
-
-      this._backgroundCheckService.DeleteApplicationFormChecks({ applicationFormId: this.dynamicForm.id, checkId: id }).then(async t => {
-        if (t.success) {
-          await this._backgroundCheckService.getInviteApplicationFormChecks([this.dynamicForm.id]);
-          this.toast.show('Check deleted successfully', { status: 'success' });
-        }
-        else
-          this.toast.show(t.message && t.message != '' ? t.message : 'Something went wrong', { status: 'error' });
-      })
-
-      this.updateCheckSettings.emit({ checkId: -1 });
-    }).catch(e => console.log(e));
+    console.log('Background check functionality not available in simplified POC');
   }
 
-  // deleteFieldAction(id: number) {
-  //   this.popup.show(YesNoPopupComponent, { bodyMessage: 'Are you sure you want to delete this question?</br> Note: All associated data will be lost.', buttonUIProps: { yes: { text: 'Delete', color: 'custom-red-bg' }, no: { text: 'Cancel', color: 'bg-primary bg-opacity-75 custom-blue-bg' } } }).then(t => {
-  //     if (!t.isConfirm) return;
+  deleteFieldAction(id: number) {
+    console.log('Delete field confirmation - simplified POC');
+    const fieldId = id;
+    let rows =
+      this.dynamicForm.stages
+        .find(s => s.formStageId == this.stage.formStageId).sections
+        .find(sc => sc.formSectionId == this.section.formSectionId).rows
 
-  //     const fieldId = id;
-  //     let rows =
-  //       this.dynamicForm.stages
-  //         .find(s => s.formStageId == this.stage.formStageId).sections
-  //         .find(sc => sc.formSectionId == this.section.formSectionId).rows
+    let colList = rows.find(r => r.columns.find(c => c.formFieldId == fieldId)).columns
 
-  //     let colList = rows.find(r => r.columns.find(c => c.formFieldId == fieldId)).columns
+    const idx = colList.findIndex(cl => cl.formFieldId == fieldId);
+    if (idx != -1) {
+      colList.splice(idx, 1);
 
-  //     const idx = colList.findIndex(cl => cl.formFieldId == fieldId);
-  //     if (idx != -1) {
-  //       colList.splice(idx, 1);
+      // manage columnIdx rest of the field, which placed after removed field in the same column array
+      for (let i = idx; i < colList.length; i++) {
+        colList[i].columnIndex = colList[i].columnIndex - 1;
+        this.setUpdateMainChanges(colList[i], ["columnIndex"]);
+      }
 
-  //       // manage columnIdx rest of the field, which placed after removed field in the same column array
-  //       for (let i = idx; i < colList.length; i++) {
-  //         colList[i].columnIndex = colList[i].columnIndex - 1;
-  //         this.setUpdateMainChanges(colList[i], ["columnIndex"]);
-  //       }
+      // remove columnsArr if there any field not exists
+      if (colList.length < 1)
+        rows.splice(this.section.rows.length - 1, 1)
+    }
 
-  //       // remove columnsArr if there any field not exists
-  //       if (colList.length < 1)
-  //         rows.splice(this.section.rows.length - 1, 1)
-  //     }
+    this.updateDynamicForm.emit(this.dynamicForm);
+    this.setDeleteMainChanges(fieldId);
 
-  //     this.updateDynamicForm.emit(this.dynamicForm);
-  //     this.setDeleteMainChanges(fieldId);
-  //   }).catch(e => console.log(e));
-
-  //   // this.editableFieldId = -1;
-  //   this.updateEditSettings.emit({ formFieldId: -1 })
-
-  // }
+    // this.editableFieldId = -1;
+    this.updateEditSettings.emit({ formFieldId: -1 })
+  }
 
   /** Template Methods Ended Here */
 
   /*** Child emit Methods */
-  retriveUpdatesForDependent(updatedField: FormField) {
-    let field = this.getColumnFromDynamicForm(updatedField.id);
-    let refCol = this.refColumnList.find(col => col.id == updatedField.id)
-    // if (refCol && field && field != null) {
-    //   field.value = updatedField.value;
-    //   refCol.value = updatedField.value;
-    // }
+  retriveUpdatesForDependent(updatedField: any) {
+    let field = this.getColumnFromDynamicForm(updatedField.formFieldId)
+    let refCol = this.refColumnList.find(col => col.formFieldId == updatedField.formFieldId)
+    if (refCol && field && field != null) {
+      console.log('Field updated:', updatedField);
+    }
 
     this.updateDynamicForm.emit(this.dynamicForm);
   }
 
-  retriveEditPropChanges(event: { isNewAndCanceled?: boolean, isDependencyCRUD?: boolean, field?: FormField, changes: string[] }) {
-    console.log(event.field, event.changes, event.isDependencyCRUD);
+  retriveEditPropChanges(event: { isSuccess: boolean, qry: any }) {
+    console.log('Field properties update:', event);
     this.isEditPropWindowVisible = false;
 
-    if (event.isNewAndCanceled && event.changes.length <= 0)
-      // this.RemoveFieldFormTemplate(this.selectedEditField);
-
-    if (event.field && event.changes.length > 0)
-      this.setUpdateMainChanges(event.field, event.changes);
-
-    if (crudChangeObj.ADD.length > 0 || crudChangeObj.UPDATE.length > 0)
-      this.updateForm.emit({ caseId: 1 });
+    if (event.isSuccess && event.qry) {
+      if (this.isAddFieldSidebar) {
+        if (!this.section.rows) {
+          this.section.rows = [];
+        }
+        if (this.section.rows.length === 0) {
+          this.section.rows.push({ columns: [] });
+        }
+        
+        const lastRow = this.section.rows[this.section.rows.length - 1];
+        if (!lastRow.columns) {
+          lastRow.columns = [];
+        }
+        lastRow.columns.push(event.qry);
+        console.log('Added new field to section:', event.qry);
+      } else {
+        console.log('Updated existing field:', event.qry);
+      }
+      this.updateDynamicForm.emit(this.dynamicForm);
+    } else if (!event.isSuccess && this.isAddFieldSidebar) {
+      console.log('Cancelled adding new field');
+    }
 
     this.selectedEditField = undefined;
     this.isAddFieldSidebar = false;
-    // this.editableFieldId = -1;
-    this.updateEditSettings.emit({ formFieldId: -1 })
+    this.updateEditSettings.emit({ formFieldId: -1 });
   }
 
   retriveDragFieldSidebarUpdate(event: { status: boolean, data: any[] }) {
@@ -302,28 +331,6 @@ export class SectionRowsComponent implements OnInit {
     }
   }
 
-  retriveBackgroundCheckChanges(event: { isNewAndCanceled?: boolean, isSuccess: boolean, qry: object }) {
-    console.log(event.isSuccess, event.qry);
-    this.isBackgroundCheckSidebar = false;
-
-
-    if (event.isNewAndCanceled)
-      // this.RemoveCheckFromTemplate();
-
-    if (event.isSuccess) {
-      if (this.isAddBackgroundCheckSidebar) {
-        this.updateForm.emit({ caseId: 3, data: { add: event.qry } });
-      }
-      else {
-        this.updateForm.emit({ caseId: 3, data: { update: event.qry } });
-      }
-    }
-
-    this.isAddBackgroundCheckSidebar = false;
-
-    this.checkCategory = 0;
-    this.updateCheckSettings.emit({ checkId: -1 })
-  }
 
   retriveChecksDragDropSidebar(event: { status: boolean, data: any[] }) {
     this.currentDnDModelId = -1;
@@ -336,24 +343,17 @@ export class SectionRowsComponent implements OnInit {
   }
 
   public getDnDModelList(): Array<{ id: number, value: any, orderNo?: number }> {
-    let x = this._backgroundCheckService.checks.applicationformChecks.filter(x => x.name != "BackgroundCheckDeclaration").map((item, idx) => ({
-      id: item.checkId,
-      value: item.displayName,
-      orderNo: idx + 1
-    }));
-
-    console.log(x);
-    return x;
+    return [];
   }
   /*** Siebar Model Methods */
-  public getDragFieldModel(): SubSection {
+  public getDragFieldModel(): Sections {
     return this.section && this.section != null && this.section != undefined ? JSON.parse(JSON.stringify(this.section)) : null;
   }
 
   /*** CRUD Manage methods ***/
-  setAddMainChanges(field: FormField) {
+  setAddMainChanges(field: Columns) {
     let arr = crudChangeObj['ADD'];
-    let existedField = arr.find(x => x.formFieldId == field.id);
+    let existedField = arr.find(x => x.formFieldId == field.formFieldId);
 
     if (existedField)
       existedField = field;
@@ -361,15 +361,15 @@ export class SectionRowsComponent implements OnInit {
       arr.push(field);
   }
 
-  setUpdateMainChanges(field: FormField, changes: string[]) {
-    if (this.isAddFieldSidebar) {
+  setUpdateMainChanges(field: Columns, changes: string[]) {
+    if (field.isNewField) {
       this.setAddMainChanges(field)
       return;
     }
     let arr = crudChangeObj['UPDATE']
     let prop = {}
     changes.forEach(ch => { prop[ch] = field[ch] })
-    let existedField = arr.find(x => x.formFieldId == field.id)
+    let existedField = arr.find(x => x.formFieldId == field.formFieldId)
     if (existedField) {
       if (changes.includes("columnIndex")) {
         existedField.prop.columnIndex = field.columnIndex;
@@ -382,7 +382,7 @@ export class SectionRowsComponent implements OnInit {
         existedField.prop = prop;
     }
     else {
-      arr.push({ formFieldId: field.id, prop: prop })
+      arr.push({ formFieldId: field.formFieldId, prop: prop })
     }
   }
 
@@ -400,89 +400,79 @@ export class SectionRowsComponent implements OnInit {
 
   private generalPreparationMethod() {
     this.formProps = { applicationFormId: this.dynamicForm.id };
-    this.dynamicForm.sections.forEach((section) => {
-      section.subSections.forEach((subSection) => {
-        subSection.formFields.forEach((formField) => {
-
-          this.formFieldIdsList.push(formField.id);
-
-          // formField.dependentFormFieldColumns.forEach((df) => {
-          //   if (this.refColumnList.findIndex(x => x.formFieldId == df.refFormFieldId) == -1) {
-          //     let refField = this.getColumnFromDynamicForm(df.refFormFieldId);
-          //     if (refField) this.refColumnList.push(refField);
-          //   }
-          // });
-        });
+    if (this.dynamicForm.sections) {
+      this.dynamicForm.sections.forEach((section) => {
+        if (section.subSections) {
+          section.subSections.forEach((subSection) => {
+            if (subSection.formFields) {
+              subSection.formFields.forEach(field => {
+                // add In ColumnList
+                this.formFieldIdsList.push(field.id);
+              });
+            }
+          });
+        }
       });
-    });
+    }
+    // Get all field types and filter to only show allowed ones for simplified POC
+    const allFieldTypes = getControlCategoryList(0, null, 1);
+    const allowedControlTypes = ['TextBox', 'DatePicker', 'RadioButton', 'MultilineTextbox', 'DropDown', 'SingleFileUpload', 'Lable', 'MultipleSelectCheckBox', 'LableCheckBox'];
+    
+    this.fieldTypeList = allFieldTypes.filter(category => 
+      category.controls.some(control => allowedControlTypes.includes(control))
+    ).map(category => ({
+      ...category,
+      controls: category.controls.filter(control => allowedControlTypes.includes(control))
+    })).filter(category => category.controls.length > 0);
   }
 
   getColumnFromDynamicForm(fieldId: number) {
-    for (let i = 0; i < this.dynamicForm.sections.length; i++) {
-      const stage = this.dynamicForm.sections[i];
-      for (let j = 0; j < stage.subSections.length; j++) {
-        const section = stage.subSections[j];
-        for (let k = 0; k < section.formFields.length; k++) {
-          const row = section.formFields[k];
-          let field = section.formFields.find(x => x.id == fieldId)
-          if (field) return field;
+    if (this.dynamicForm.sections) {
+      for (let i = 0; i < this.dynamicForm.sections.length; i++) {
+        const section = this.dynamicForm.sections[i];
+        if (section.subSections) {
+          for (let j = 0; j < section.subSections.length; j++) {
+            const subSection = section.subSections[j];
+            if (subSection.formFields) {
+              let field = subSection.formFields.find(x => x.id == fieldId);
+              if (field) return field;
+            }
+          }
         }
       }
     }
     return null;
   }
 
-  // private prepareFieldObject(controlType: string) {
-  //   let formId = this.dynamicForm.id;
-  //   let formSectionId = this.section.id;
-  //   let lastColumn: FormField = this.section.rows[this.section.rows.length - 1].columns.find((x, i, arr) => i == (arr.length - 1));
-  //   let uniqueValue: number = this.genrateFormFieldId();
-  //   let colIdx = () => {
-  //     if (lastColumn.dependentFormFieldColumns && lastColumn.dependentFormFieldColumns.length > 0)
-  //       return 1;
-  //     else if (lastColumn.controlType == 'SpecialLable' || lastColumn.controlType == 'Lable')
-  //       return 1;
-  //     else
-  //       return lastColumn.columnIndex + 1;
-  //   }
-  //   let field: FormField = {
-  //     formFieldId: uniqueValue,
-  //     isNewField: true,
-  //     formSectionId: this.section.formSectionId,
-  //     tabIndex: lastColumn.tabIndex + 1,
-  //     isPostLiveManage: false,
-  //     labelName: controlType && controlType != '' ? 'Question label' : null,
-  //     fieldName: formId + '_' + formSectionId + '_' + uniqueValue,
-  //     controlType: controlType && controlType != '' ? controlType : null,
-  //     columnIndex: colIdx(),
-  //     questionSpan: 4,
-  //     answerSpan: 8,
-  //     maxColumn: this.section.maxColumn,
-  //     isRequired: false,
-  //     isArrayIndex: false,
-  //     value: null,
-  //     imagePath: null,
-  //     videoPath: null,
-  //     videoId: 0,
-  //     isReadOnly: false,
-  //     dependentFormFieldColumns: [],
-  //     isComment: false,
-  //     isSignatureRequired: false,
-  //     placeholder: '',
-  //     fieldAnswer: null,
-  //     atsPropertyId: null,
-  //     atsPropertyValue: null,
-  //     fieldValidator: null,
-  //     integratedTo: [
-  //       FieldTypeEnum.DocumentCollection, FieldTypeEnum.ClientReport,
-  //       FieldTypeEnum.LableCheckBox, FieldTypeEnum.SingleFileUpload
-  //     ].contains(FieldTypeEnum[controlType]) ? 1 : null
-  //   }
-  //   return field;
-  // }
+  private prepareFieldObject(controlType: string) {
+    let formId = this.dynamicForm.id || 1;
+    let formSectionId = this.section.id || 1;
+    let uniqueValue: number = this.genrateFormFieldId();
+    
+    let field: any = {
+      id: uniqueValue,
+      type: this.getFieldTypeNumber(controlType),
+      label: controlType && controlType != '' ? 'Question label' : '',
+      placeholder: '',
+      required: false,
+      options: [],
+      columnIndex: 1,
+      tabIndex: 1,
+      formFieldId: uniqueValue,
+      isNewField: true,
+      formSectionId: formSectionId,
+      isPostLiveManage: false,
+      labelName: controlType && controlType != '' ? 'Question label' : null,
+      fieldName: formId + '_' + formSectionId + '_' + uniqueValue,
+      controlType: controlType && controlType != '' ? controlType : null,
+      isRequired: false,
+      maxLength: null
+    }
+    return field;
+  }
 
   prepareCheckObject(checkId: number) {
-    return this._backgroundCheckService.getCheckControlList(checkId);
+    return null;
   }
 
   private genrateFormFieldId(min: number = 1, max: number = 100): number {
@@ -497,130 +487,139 @@ export class SectionRowsComponent implements OnInit {
     return num;
   }
 
-  // private anyControlSpecificSetup(field: FormField) {
-  //   switch (field.controlType) {
-  //     case 'DocumentCollection':
-  //       field.maxColumn = 1;
-  //       break;
-  //     case 'SpecialLable':
-  //       field.maxColumn = 1;
-  //       field.questionSpan = 12;
-  //       field.answerSpan = null;
-  //       break;
-  //     case 'LableCheckBox':
-  //       field.maxColumn = 1;
-  //       field.lookupViewId = 1;
-  //       field.questionSpan = 3;
-  //       field.answerSpan = 9;
-  //       break;
-  //     case 'RadioButton':
-  //       field.questionSpan = 8,
-  //         field.answerSpan = 4,
-  //         field.lookupViewId = 1;
-  //       break;
-  //     case 'TextBox':
-  //       field.maxLength = 50;
-  //       break;
-  //     case 'ClientReport':
-  //       field.maxColumn = 3;
-  //       break;
-  //     case 'SingleSlider':
-  //       field.maxLength = 5;
-  //       break;
-  //     default:
-  //       break;
-  //   }
+  private getFieldTypeNumber(controlType: string): number {
+    const typeMap: { [key: string]: number } = {
+      'TextBox': 11,
+      'DatePicker': 12,
+      'RadioButton': 14,
+      'MultilineTextbox': 17,
+      'DropDown': 18,
+      'SingleFileUpload': 22,
+      'Lable': 24,
+      'MultipleSelectCheckBox': 25,
+      'SwitchCheckBox': 28,
+      'LableCheckBox': 65
+    };
+    return typeMap[controlType] || 11; // Default to TextBox
+  }
 
-  //   if (this.section.maxColumn == 1) {
-  //     switch (field.controlType) {
-  //       case 'TextBox':
-  //         field.maxColumn = 3;
-  //         break;
-  //       case 'DropDown':
-  //         field.maxColumn = 3;
-  //         break;
-  //       case 'RadioButton':
-  //         field.maxColumn = 3;
-  //         break;
-  //       case 'MultipleSelectCheckBox':
-  //         field.maxColumn = 3;
-  //         break;
-  //       case 'SingleFileUpload':
-  //         field.maxColumn = 3;
-  //         break;
-  //       case 'SwitchCheckBox':
-  //         field.maxColumn = 3;
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //   }
-  // }
+  private anyControlSpecificSetup(field: Columns) {
+    switch (field.controlType) {
+      case 'DocumentCollection':
+        field.maxColumn = 1;
+        break;
+      case 'SpecialLable':
+        field.maxColumn = 1;
+        field.questionSpan = 12;
+        field.answerSpan = null;
+        break;
+      case 'LableCheckBox':
+        field.maxColumn = 1;
+        field.lookupViewId = 1;
+        field.questionSpan = 3;
+        field.answerSpan = 9;
+        break;
+      case 'RadioButton':
+        field.questionSpan = 8,
+          field.answerSpan = 4,
+          field.lookupViewId = 1;
+        break;
+      case 'TextBox':
+        field.maxLength = 50;
+        break;
+      case 'ClientReport':
+        field.maxColumn = 3;
+        break;
+      case 'SingleSlider':
+        field.maxLength = 5;
+        break;
+      default:
+        break;
+    }
 
-  // AddFieldInTemplate(field: FormField) {
-  //   let row = this.section.rows[this.section.rows.length - 1];
-  //   if (field.columnIndex == 1 || row.columns.length >= this.section.maxColumn || field.controlType == 'DocumentCollection') {
-  //     field.columnIndex = 1;
-  //     this.section.rows.push({ columns: [field] });
-  //   }
-  //   else row.columns.push(field);
-  //   this.updateDynamicForm.emit(this.dynamicForm)
-  // }
+    if (this.section.maxColumn == 1) {
+      switch (field.controlType) {
+        case 'TextBox':
+          field.maxColumn = 3;
+          break;
+        case 'DropDown':
+          field.maxColumn = 3;
+          break;
+        case 'RadioButton':
+          field.maxColumn = 3;
+          break;
+        case 'MultipleSelectCheckBox':
+          field.maxColumn = 3;
+          break;
+        case 'SingleFileUpload':
+          field.maxColumn = 3;
+          break;
+        case 'SwitchCheckBox':
+          field.maxColumn = 3;
+          break;
+        default:
+          break;
+      }
+    }
+  }
 
-  // AddCheckInTemplate(check: IBackgorundCheck) {
-  //   this._backgroundCheckService.checks.applicationformChecks.push(check);
-  // }
+  AddFieldInTemplate(field: any) {
+    console.log('Adding field to template:', field);
+    this.updateDynamicForm.emit(this.dynamicForm)
+  }
 
-  // RemoveCheckFromTemplate() {
-  //   this._backgroundCheckService.checks.applicationformChecks.pop();
-  // }
+  AddCheckInTemplate(check: any) {
+  }
 
-  // RemoveFieldFormTemplate(field: FormField) {
-  //   let row: Rows = this.section.rows[this.section.rows.length - 1];
-  //   if (row.columns.length > 1)
-  //     row.columns.pop();
-  //   else
-  //     this.section.rows.pop();
+  RemoveCheckFromTemplate() {
+  }
 
-  //   this.formFieldIdsList.pop();
-  //   this.updateDynamicForm.emit(this.dynamicForm);
-  // }
+  RemoveFieldFormTemplate(field: Columns) {
+    let row: Rows = this.section.rows[this.section.rows.length - 1];
+    if (row.columns.length > 1)
+      row.columns.pop();
+    else
+      this.section.rows.pop();
+
+    this.formFieldIdsList.pop();
+    this.updateDynamicForm.emit(this.dynamicForm);
+  }
 
 
 
-  // /**
-  //  * CSS Methods
-  //  */
-  // getConditionalFlag(field: FormField, stage?: Section, section?: SubSection) {
-  //   var flag: String = '';
-  //   switch (field.controlType) {
-  //     case 'LableCheckBox':
-  //       flag = (section?.sectionName.trim().toLowerCase()) == 'most recent job' ? 'work-history' : '';
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  //   return flag;
-  // }
+  /**
+   * CSS Methods
+   */
+  getConditionalFlag(field: Columns, stage?: Stages, section?: Sections) {
+    var flag: String = '';
+    switch (field.controlType) {
+      case 'LableCheckBox':
+        flag = (section?.sectionName.trim().toLowerCase()) == 'most recent job' ? 'work-history' : '';
+        break;
+      default:
+        break;
+    }
+    return flag;
+  }
 
-  // getConditionalCSSFlag(field: FormField, stage?: Section, section?: SubSection) {
-  //   var flag: String = '';
+  getConditionalCSSFlag(field: Columns, stage?: Stages, section?: Sections) {
+    var flag: String = '';
 
-  //   if (field.controlType == "ClientReport") {
-  //     flag = 'col-sm-4';
-  //     return flag;
-  //   }
+    if (field.controlType == "ClientReport") {
+      flag = 'col-sm-4';
+      return flag;
+    }
 
-  //   switch (field.fieldName) {
-  //     case 'visasummary':
-  //       flag = 'col-sm-8';
-  //       break;
-  //     case 'visaimage':
-  //       flag = 'col-sm-4';
-  //       break;
-  //     default: flag = field.maxColumn && field.maxColumn > 0 ? 'col-sm-' + (12 / field.maxColumn) : 'col-sm-4'
-  //       break;
-  //   }
-  //   return flag;
-  // }
+    switch (field.fieldName) {
+      case 'visasummary':
+        flag = 'col-sm-8';
+        break;
+      case 'visaimage':
+        flag = 'col-sm-4';
+        break;
+      default: flag = field.maxColumn && field.maxColumn > 0 ? 'col-sm-' + (12 / field.maxColumn) : 'col-sm-4'
+        break;
+    }
+    return flag;
+  }
 }

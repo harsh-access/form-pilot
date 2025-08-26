@@ -14,6 +14,7 @@ namespace EditForm.Domain
             {
                 Id = EditFormDomain.IncreamentSubSectionId(),
                 Title = dto.SubSectionName,
+                OrderNo = dto.OrderNo,
                 FormFields = new List<FormField>()
             };
             
@@ -30,6 +31,8 @@ namespace EditForm.Domain
             if (index == -1) return false;
 
             section.SubSections[index].Title = dto.SubSectionName;
+            section.SubSections[index].OrderNo = dto.OrderNo;
+
             return true;
         }
 

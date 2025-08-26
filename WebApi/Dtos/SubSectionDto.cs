@@ -2,6 +2,7 @@
 {
     public class SubSectionDto
     {
-        public string SubSectionName { get; set; }
+        public required string  SubSectionName { get; set; }
+        public int OrderNo { get; set; }
     }
 }

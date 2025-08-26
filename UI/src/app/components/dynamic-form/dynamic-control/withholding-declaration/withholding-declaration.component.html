@@ -1,0 +1,56 @@
+<div *ngIf=" section.sectionName == 'Update(s) to Bank, Tax, Super'" >
+  <app-section-rows [stage]="stage" [section]="section" [dynamicForm]="dynamicForm"></app-section-rows>
+</div>
+
+<div class="health-work" *ngIf="section.sectionName != 'Update(s) to Bank, Tax, Super'">
+
+  <ng-container *ngIf="section.sectionName == 'Withholding Declaration Form'">
+    <div class="payroll-pack" >
+      <h5 class="payroll-pack-heading-class witholding-heading fw-semibold ps-0 d-flex justify-content-between pe-0 align-items-center">
+        <p class="mb-0"><span class="me-2"><i aria-hidden="true" class="fa fa-sort-{{ tfnSwitch ? 'desc':'asc' }}"></i></span> Update your Tax Information </p>
+        <div class="form-check form-switch">
+          <input class="form-check-input " type="checkbox" role="switch" style="height: 20px;width: 48px;" (change)="tfnSwitch = !tfnSwitch">
+        </div>
+      </h5>
+    </div>
+    <div class="payroll-pack-body-class {{tfnSwitch ? '' : 'd-none'}}" >
+      <div class="d-flex justify-content-center py-4 px-sm-2 " style="background-color: #eee;" >
+        <img src="../../../../../assets/img/ScreenShots/WithHoldingTFN.png" alt="WithHoldingTFN" class="img-fluid pdf-view"  >
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="section.sectionName == 'Super Choice Form'">
+    <div class="payroll-pack" >
+      <h5 class="payroll-pack-heading-class witholding-heading fw-semibold ps-0 d-flex justify-content-between pe-0 align-items-center">
+        <p class="mb-0"><span class="me-2"><i aria-hidden="true" class="fa fa-sort-{{ tfnSwitch ? 'desc':'asc' }}"></i></span> Update your Super Details </p>
+        <div class="form-check form-switch">
+          <input class="form-check-input " type="checkbox" role="switch" style="height: 20px;width: 48px;" (change)="tfnSwitch = !tfnSwitch">
+        </div>
+      </h5>
+    </div>
+    <div class="payroll-pack-body-class {{tfnSwitch ? '' : 'd-none'}}" >
+      <div class="d-flex justify-content-center  " style="background-color: #eee;" >
+        <img src="../../../../../assets/img/ScreenShots/Super.png" alt="Super" class="img-fluid m-0"  >
+      </div>
+
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="section.sectionName == 'Bank Details'">
+    <div class="payroll-pack" >
+      <h5 class="payroll-pack-heading-class witholding-heading fw-semibold ps-0 d-flex justify-content-between pe-0 align-items-center">
+        <p class="mb-0"><span class="me-2"><i aria-hidden="true" class="fa fa-sort-{{ bankSwitch? 'desc':'asc' }}"></i></span> Update your Bank Details </p>
+        <div class="form-check form-switch">
+          <input class="form-check-input " type="checkbox" role="switch" style="height: 20px;width: 48px;" (change)="bankSwitch = !bankSwitch">
+        </div>
+      </h5>
+    </div>
+    <div class="payroll-pack-body-class {{bankSwitch ? '' : 'd-none'}}">
+      <app-section-rows [stage]="stage" [section]="section" [dynamicForm]="dynamicForm"></app-section-rows>
+    </div>
+  </ng-container>
+
+</div>
+
+

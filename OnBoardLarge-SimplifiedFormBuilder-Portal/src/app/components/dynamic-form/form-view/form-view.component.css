@@ -1,0 +1,106 @@
+.stageList-container{
+  gap: 10px;
+  margin: 10px;
+}
+
+.stageList-box{
+  transition: box-shadow 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.stageList-box.cdk-drag-disabled {
+  background: #ffffff !important;
+  cursor: not-allowed ;
+  user-select: none !important;
+}
+.stageList-box.cdk-drag-disabled:active {
+    opacity: 1;
+}
+.drag-blocks .cursor-not-allowed, .drag-blocks .stageList-box.cdk-drag-disabled{
+  position: relative;
+}
+.drag-blocks .cursor-not-allowed::before, .drag-blocks .cursor-not-allowed::after, .drag-blocks .stageList-box.cdk-drag-disabled::before, .drag-blocks .stageList-box.cdk-drag-disabled::after   {
+  opacity: 0;
+  visibility: hidden;
+  margin-top: -0.5em;
+  transform-origin: top;
+  transition: all 0.18s ease-out 0.18s;
+  transform: translateY(10px);
+}
+.drag-blocks .cursor-not-allowed::before, .drag-blocks .stageList-box.cdk-drag-disabled::before {
+  content: "Restricted Section";
+  display: block;
+  position: absolute;
+  top: -30px;
+  left: 0;
+  width: max-content;
+  text-align: center;
+  border-radius: 4px;
+  background: #6d6d6d;
+  color: white;
+  font-size: 11px;
+  line-height: 1.1;
+  padding: 0.75em 0.95em;
+  margin: 0 auto;
+  right: 0;
+  margin-top: -0.5em;
+}
+.drag-blocks .cursor-not-allowed::after, .drag-blocks .stageList-box.cdk-drag-disabled::after {
+  content: "";
+  border: 7px solid transparent;
+  border-top-color: #6d6d6d;
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  margin-left: -10px;
+}
+.drag-blocks .cursor-not-allowed:hover::before, .drag-blocks .cursor-not-allowed:hover::after, .drag-blocks .stageList-box.cdk-drag-disabled:hover::before, .drag-blocks .stageList-box.cdk-drag-disabled:hover::after{
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.stageList-box:active {
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  opacity: 0.6;
+}
+
+.cdk-drag-preview {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder{
+   background: #ccc;
+  border: dotted 3px #999;
+  min-height: 50px;
+  max-width: 300px;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.stageList-box:last-child {
+  border: none;
+}
+
+.stageList-list.cdk-drop-list-dragging .stageList-box:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.stageList-custom-placeholder {
+  background: #ccc;
+  border: dotted 3px #999;
+  min-height: 50px;
+  max-width: 300px;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+ .stageList-boundary {
+  /* width: 400px;
+  height: 400px; */
+  max-width: 100%;
+  border: solid #dee2e6 1px;
+}

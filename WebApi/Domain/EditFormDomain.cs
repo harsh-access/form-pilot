@@ -10,11 +10,17 @@ namespace EditForm.Domain
             Sections = new List<Section>
             {
                 new()
-                { Id = 1, Title = "Personal Information", 
+                { 
+                    Id = 1, 
+                    Title = "Personal Information", 
+                    OrderNo = 1,
                     SubSections = new()
                     {
                         new() 
-                        { Id = 1, Title = "PersonalDetails", 
+                        { 
+                            Id = 1, 
+                            Title = "PersonalDetails", 
+                            OrderNo = 1,
                             FormFields = new()
                             {
                                new() { Id = 1, Type = FieldTypeEnum.DropDown, ColumnIndex = 1, Label = "Title", Required = true, Options = ["Dr.","Ms.","Mrs.","Mr."], TabIndex = 1 },
@@ -24,7 +30,10 @@ namespace EditForm.Domain
                             } 
                         },
                         new() 
-                        { Id = 2, Title = "Contact", 
+                        { 
+                            Id = 2, 
+                            Title = "Contact",
+                            OrderNo = 2,
                             FormFields = new()
                             {
                                 new() { Id = 5, Type = FieldTypeEnum.TextBox, ColumnIndex = 1, Label = "Telephone", Required = true, TabIndex = 1 },
@@ -35,10 +44,16 @@ namespace EditForm.Domain
                     } 
                 },
                 new()
-                { Id = 2, Title = "Documents", 
+                { 
+                    Id = 2, 
+                    Title = "Documents", 
+                    OrderNo = 2,
                     SubSections = new()
                     {
-                        new() { Id = 3, Title = "Identification", 
+                        new() { 
+                            Id = 3, 
+                            Title = "Identification", 
+                            OrderNo = 1,
                             FormFields = new()
                             {
                                 new() { Id = 8, Type = FieldTypeEnum.SingleFileUpload, ColumnIndex = 1, Label = "Identification Primary", Required = true, TabIndex = 4 }

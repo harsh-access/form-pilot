@@ -1,0 +1,16 @@
+<div *ngIf="showComponent">
+    <div class="w-100 international-mobile-code" [class.formfield_contact]="!applyClass">
+        <div class="international-mobile">
+            <form #f="ngForm" [formGroup]="phoneForm">
+                <ngx-intl-tel-input [class.newform-control]="applyClass" [enableAutoCountrySelect]="true" [enablePlaceholder]="true"
+                    [searchCountryFlag]="true" [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                    [selectedCountryISO]="this.countryCode" [phoneValidation]="true" name="phone"
+                    [selectFirstCountry]="false" [(ngModel)]="phoneNumber" [inputId]="phone" formControlName="phone"
+                    [separateDialCode]="false" [maxLength]="15" (ngModelChange)="countryChanged($event)"
+                    (countryChange)="onCountryChange($event)" (onCountrySelect)="onCountrySelect(this.countryCode,e)"
+                    [numberFormat]="phoneNumberFormat.National">
+                </ngx-intl-tel-input>
+            </form>
+        </div>
+    </div>
+</div>

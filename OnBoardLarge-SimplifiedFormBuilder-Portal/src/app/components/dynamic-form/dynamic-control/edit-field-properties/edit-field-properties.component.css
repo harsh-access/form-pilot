@@ -1,0 +1,13 @@
+.link-style {
+    color: #007bff;
+    /* Link color (blue by default) */
+    text-decoration: underline;
+    /* Underline the text */
+    cursor: pointer;
+    /* Change cursor to pointer to indicate it's clickable */
+}
+
+.link-style:hover {
+    color: #0056b3;
+    /* Darker shade of blue on hover */
+}

@@ -17,6 +17,7 @@ namespace EditForm.Domain
             {
                 Id = EditFormDomain.IncreamentSectionId(),
                 Title = dto.SectionName,
+                OrderNo = dto.OrderNo,
                 SubSections = new List<SubSection>()
             };
             DynamicForms.Sections.Add(section);
@@ -27,8 +28,8 @@ namespace EditForm.Domain
         {
             var index = DynamicForms.Sections.FindIndex(s => s.Id == sectionId);
             if (index == -1) return false;
-
             DynamicForms.Sections[index].Title = dto.SectionName;
+            DynamicForms.Sections[index].OrderNo = dto.OrderNo;
             return true;
         }
 
