@@ -44,7 +44,7 @@ namespace EditForm.Domain
             Pageable<PersistentThreadMessage> messages = agentsClient.Messages.GetMessages(
                 thread.Id, order: ListSortOrder.Ascending);
 
-            // Display messages
+            var messageList = new List<string>();
             foreach (PersistentThreadMessage threadMessage in messages)
             {
                 Console.Write($"{threadMessage.CreatedAt:yyyy-MM-dd HH:mm:ss} - {threadMessage.Role,10}: ");
@@ -53,6 +53,10 @@ namespace EditForm.Domain
                     if (contentItem is MessageTextContent textItem)
                     {
                         Console.Write(textItem.Text);
+                        if (threadMessage.Role == MessageRole.Agent)
+                        {
+                            messageList.Add(textItem.Text);
+                        }
                     }
                     else if (contentItem is MessageImageFileContent imageFileItem)
                     {
@@ -62,26 +66,7 @@ namespace EditForm.Domain
                 }
             }
 
-            //var messages = new List<string>();
-            //if (messagesDoc.RootElement.TryGetProperty("data", out var dataArray))
-            //{
-            //    foreach (var message in dataArray.EnumerateArray())
-            //    {
-            //        if (message.TryGetProperty("content", out var contentArray))
-            //        {
-            //            foreach (var content in contentArray.EnumerateArray())
-            //            {
-            //                if (content.TryGetProperty("text", out var textObj) &&
-            //                    textObj.TryGetProperty("value", out var textValue))
-            //                {
-            //                    messages.Add(textValue.GetString() ?? "");
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
-            return new List<string>();
+            return messageList;
         }
     }
 }
