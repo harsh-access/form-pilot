@@ -120,5 +120,22 @@ namespace EditForm.Domain
         //{
         //    new() { Id = 1, Title = "Test Form", Sections = Sections }
         //};
+
+        public static async Task<bool> CallAzureFoundry()
+        {
+            var messages = await EditForm.Domain.AIFoundryAPIDomain.RunAgentConversation("Your custom message here");
+            foreach (var message in messages)
+            {
+                // Access message properties
+                Console.WriteLine($"{message.CreatedAt}: {message.Role}");
+                foreach (var content in message.ContentItems)
+                {
+                    if (content is MessageTextContent text)
+                        Console.WriteLine(text.Text);
+                }
+            }
+
+            return true;
+        }
     }
 }
