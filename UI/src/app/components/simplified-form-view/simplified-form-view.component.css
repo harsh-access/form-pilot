@@ -1,0 +1,8 @@
+.container-fluid {
+  max-width: 1200px;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}

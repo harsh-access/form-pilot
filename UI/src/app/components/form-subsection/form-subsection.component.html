@@ -1,0 +1,24 @@
+<div class="form-subsection mb-4">
+  <div class="subsection-header p-3 mb-3">
+    <h5 class="mb-0">
+      <i class="fas fa-list me-2"></i>
+      {{ subSection.title }}
+    </h5>
+  </div>
+  
+  <div class="row">
+    <div *ngIf="subSection.formFields && subSection.formFields.length > 0" class="col-12">
+      <div class="row">
+        <div *ngFor="let field of subSection.formFields; trackBy: trackByField" 
+             class="col-md-6 col-lg-4 mb-3">
+          <app-form-field [field]="field"></app-form-field>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!subSection.formFields || subSection.formFields.length === 0" class="col-12">
+      <div class="text-muted">
+        <em>No fields found in this subsection.</em>
+      </div>
+    </div>
+  </div>
+</div>

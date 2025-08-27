@@ -1,0 +1,10 @@
+.subsection-header {
+  background-color: #f8f9fa;
+  border-left: 4px solid #007bff;
+  border-radius: 4px;
+}
+
+.subsection-header h5 {
+  color: #495057;
+  font-weight: 600;
+}

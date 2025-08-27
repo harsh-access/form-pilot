@@ -1,0 +1,19 @@
+<div class="card form-section mb-4">
+  <div class="card-header section-header">
+    <h4 class="mb-0 py-2">
+      <i class="fas fa-folder-open me-2"></i>
+      {{ section.title }}
+    </h4>
+  </div>
+  <div class="card-body">
+    <div *ngIf="section.subSections && section.subSections.length > 0">
+      <app-form-subsection 
+        *ngFor="let subSection of section.subSections; trackBy: trackBySubSection" 
+        [subSection]="subSection">
+      </app-form-subsection>
+    </div>
+    <div *ngIf="!section.subSections || section.subSections.length === 0" class="text-muted">
+      <em>No subsections found in this section.</em>
+    </div>
+  </div>
+</div>

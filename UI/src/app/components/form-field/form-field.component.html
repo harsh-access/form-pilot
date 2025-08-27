@@ -1,0 +1,32 @@
+<div class="card form-field h-100">
+  <div class="card-body">
+    <div class="d-flex align-items-center mb-2">
+      <i [class]="getFieldIcon()" class="text-primary me-2"></i>
+      <h6 class="card-title mb-0 field-label">
+        {{ field.label }}
+        <span *ngIf="field.required" class="text-danger ms-1">*</span>
+      </h6>
+    </div>
+    
+    <div class="mb-2">
+      <span class="badge bg-secondary">{{ getFieldTypeDisplay() }}</span>
+    </div>
+    
+    <div *ngIf="field.placeholder" class="text-muted small mb-2">
+      <strong>Placeholder:</strong> {{ field.placeholder }}
+    </div>
+    
+    <div *ngIf="field.options && field.options.length > 0" class="text-muted small">
+      <strong>Options:</strong>
+      <ul class="list-unstyled ms-2 mt-1">
+        <li *ngFor="let option of field.options" class="small">• {{ option }}</li>
+      </ul>
+    </div>
+    
+    <div class="mt-2">
+      <small class="text-muted">
+        {{ field.required ? 'Required field' : 'Optional field' }}
+      </small>
+    </div>
+  </div>
+</div>

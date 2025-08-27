@@ -1,0 +1,60 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f8f9fa;
+}
+
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.form-subsection {
+  margin-bottom: 1.5rem;
+}
+
+.form-field {
+  margin-bottom: 1rem;
+}
+
+.section-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 8px 8px 0 0;
+}
+
+.subsection-header {
+  background-color: #e9ecef;
+  border-left: 4px solid #007bff;
+}
+
+.field-label {
+  font-weight: 600;
+  color: #495057;
+}
+
+.card {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+@import url("assets/css/rx-control-design/datepicker.css");
+@import url("assets/css/rx-control-design/dialog.css");
+@import url("assets/css/rx-control-design/popup.css");
+@import url("assets/css/rx-control-design/select.css");
+@import url("assets/css/rx-control-design/spinner.css");
+@import url("assets/css/rx-control-design/tag.css");
+@import url("assets/css/rx-control-design/toast.css");
+@import url("assets/css/rx-control-design/table-filter.css");
+@import url("assets/css/rx-control-design/time.css");
+@import url("assets/css/rx-control-design/tooltip.css");
+@import url("assets/css/rx-control-design/common.css");
+@import url("assets/font-awesome/css/font-awesome.css");
+@import url("assets/css/bootstrap.min.css");
+@import url("assets/css/custom.css");

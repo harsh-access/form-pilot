@@ -1,0 +1,27 @@
+.form-field {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-field:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.field-label {
+  color: #495057;
+  font-weight: 600;
+}
+
+.card-title {
+  font-size: 0.95rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+}
+
+.text-primary {
+  color: #007bff !important;
+}

@@ -1,0 +1,91 @@
+<div class="ai-assistance-panel">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">
+        <i class="fas fa-robot me-2"></i>
+        AI Form Assistant
+      </h5>
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <label for="userPrompt" class="form-label">Tell me what you'd like to change in the form:</label>
+        <textarea 
+          id="userPrompt"
+          class="form-control" 
+          rows="3" 
+          [(ngModel)]="userPrompt"
+          placeholder="e.g., 'Add a new section for contact information with email and phone fields'"
+          [disabled]="isProcessing">
+        </textarea>
+      </div>
+      
+      <div class="d-flex gap-2 mb-3">
+        <button 
+          class="btn btn-primary" 
+          (click)="submitPrompt()"
+          [disabled]="!userPrompt.trim() || isProcessing">
+          <i class="fas fa-paper-plane me-1"></i>
+          {{ isProcessing ? 'Processing...' : 'Submit Request' }}
+        </button>
+        <button 
+          class="btn btn-outline-secondary" 
+          (click)="clearPrompt()"
+          [disabled]="isProcessing">
+          <i class="fas fa-times me-1"></i>
+          Clear
+        </button>
+      </div>
+
+      <div *ngIf="isProcessing" class="text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Processing...</span>
+        </div>
+        <p class="mt-2 text-muted">AI is analyzing your request...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview Panel -->
+  <div *ngIf="showPreview && previewData" class="card mt-3">
+    <div class="card-header bg-success text-white">
+      <h6 class="mb-0">
+        <i class="fas fa-eye me-2"></i>
+        Preview Changes
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="alert alert-info">
+        <strong>AI Summary:</strong> {{ aiResponse?.summary }}
+      </div>
+      
+      <div class="preview-content">
+        <h6>Updated Form Structure:</h6>
+        <div class="border rounded p-3 bg-light">
+          <div *ngFor="let section of previewData.sections" class="mb-2">
+            <strong>{{ section.title }}</strong>
+            <div *ngFor="let subSection of section.subSections" class="ms-3">
+              <em>{{ subSection.title }}</em>
+              <ul class="ms-3">
+                <li *ngFor="let field of subSection.formFields">
+                  {{ field.label }} ({{ getFieldTypeName(field.type) }})
+                  <span *ngIf="field.required" class="text-danger">*</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 mt-3">
+        <button class="btn btn-success" (click)="acceptPreview()">
+          <i class="fas fa-check me-1"></i>
+          Accept Changes
+        </button>
+        <button class="btn btn-outline-danger" (click)="rejectPreview()">
+          <i class="fas fa-times me-1"></i>
+          Reject Changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
