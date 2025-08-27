@@ -1,9 +1,0 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
-
-/WebApi/bin/Debug/net8.0
-/WebApi/.vs
-/WebApi/obj
-/OnBoardLarge-SimplifiedFormBuilder-Portal/node_modules
-/UI/node_modules
