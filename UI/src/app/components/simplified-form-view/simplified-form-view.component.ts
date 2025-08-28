@@ -31,6 +31,7 @@ export class SimplifiedFormViewComponent implements OnInit {
         this.forms = forms || [];
         this.loading = false;
         if (this.forms.length > 0) {
+          this.selectedFormId = this.forms[0].id;
           this.loadForm(this.selectedFormId || this.forms[0].id);
         }
       },

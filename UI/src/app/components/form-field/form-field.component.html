@@ -92,6 +92,7 @@
         <div *ngSwitchCase="'File'" class="mt-2">
           <input type="file" 
                  class="form-control"
+                 style="height: 38px;"
                  [required]="formField.required">
           <div class="form-text">{{ formField.placeholder || 'Choose file to upload' }}</div>
         </div>
