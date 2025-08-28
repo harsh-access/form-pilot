@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Section } from '../../services/simplified-form.service';
+import { SubSection, FormField } from '../../services/simplified-form.service';
 
 @Component({
   selector: 'app-form-section',
@@ -7,9 +7,14 @@ import { Section } from '../../services/simplified-form.service';
   styleUrls: ['./form-section.component.css']
 })
 export class FormSectionComponent {
-  @Input() section!: Section;
+  @Input() subSection!: SubSection;
+  isCollapsed: boolean = false;
 
-  trackBySubSection(index: number, subSection: any): number {
-    return subSection.id;
+  toggleCollapse(): void {
+    this.isCollapsed = !this.isCollapsed;
+  }
+
+  trackByFormField(index: number, formField: FormField): number {
+    return formField.id;
   }
 }

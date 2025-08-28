@@ -28,6 +28,13 @@ export interface Section {
   subSections: SubSection[];
 }
 
+export interface DynamicForm {
+  id: number;
+  title: string;
+  sections: Section[];
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -64,10 +71,30 @@ export class SimplifiedFormService {
     return this.http.delete(`${this.apiUrl}/api/FormFields/${formFieldId}?sectionId=${sectionId}&subSectionId=${subSectionId}`);
   }
 
-  getAIAssistance(currentForm: any, userPrompt: string): Observable<AIAssistanceResponse> {
+  getForms(): Observable<DynamicForm[]> {
+    return this.http.get<DynamicForm[]>(`${this.apiUrl}/api/Form`);
+  }
+  
+  getForm(formId: number): Observable<DynamicForm> {
+    return this.http.get<DynamicForm>(`${this.apiUrl}/api/Form/${formId}`);
+  }
+  
+  createForm(form: DynamicForm): Observable<DynamicForm> {
+    return this.http.post<DynamicForm>(`${this.apiUrl}/api/Form`, form);
+  }
+  
+  updateForm(formId: number, form: DynamicForm): Observable<any> {
+    return this.http.put(`${this.apiUrl}/api/Form/${formId}`, form);
+  }
+  
+  deleteForm(formId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/api/Form/${formId}`);
+  }
+
+  getAIAssistance(currentForm: DynamicForm, userPrompt: string): Observable<AIAssistanceResponse> {
     const request = {
-      currentForm: currentForm,
-      userPrompt: userPrompt
+      CurrentForm: currentForm,
+      UserPrompt: userPrompt
     };
     return this.http.post<AIAssistanceResponse>(`${this.apiUrl}/api/AIFoundryAPI/assist`, request);
   }

@@ -1,0 +1,42 @@
+<div id="aiChatSidebar" class="offcanvas w-25 functional-side-panel font-open-sans offcanvas-end"
+     data-bs-scroll="true" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="aiChatSidebarLabel">
+  <div class="offcanvas-header text-gray-400 border-bottom p-0">
+    <h4 class="offcanvas-title text-center col-12 fs-6 py-3 border-bottom border-4 border-primary text-gray-400">
+      <i class="fa fa-robot me-2 text-primary" aria-hidden="true"></i>AI Assistant
+    </h4>
+    <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body text-gray-400 p-0">
+    <div class="chat-messages p-3">
+      <div *ngFor="let message of chatMessages" class="mb-3">
+        <div class="message" [ngClass]="{'user-message': message.isUser, 'ai-message': !message.isUser}">
+          <div class="message-content p-2 rounded" 
+               [ngClass]="message.isUser ? 'bg-primary text-white ms-auto' : 'bg-light text-dark'">
+            {{ message.content }}
+          </div>
+          <small class="text-muted d-block mt-1" 
+                 [ngClass]="message.isUser ? 'text-end' : 'text-start'">
+            {{ message.timestamp | date:'short' }}
+          </small>
+        </div>
+      </div>
+      <div *ngIf="isLoading" class="text-center">
+        <div class="spinner-border spinner-border-sm text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <span class="ms-2">AI is thinking...</span>
+      </div>
+    </div>
+    <div class="chat-input p-3 border-top">
+      <textarea class="form-control mb-2" rows="3" [(ngModel)]="userPrompt" 
+                placeholder="Ask me to modify the form..." 
+                (keydown.enter)="$event.ctrlKey && sendMessage()"
+                [disabled]="isLoading"></textarea>
+      <button class="btn btn-primary w-100" (click)="sendMessage()" 
+              [disabled]="!userPrompt.trim() || isLoading">
+        <i class="fas fa-paper-plane me-2"></i>
+        {{ isLoading ? 'Sending...' : 'Send' }}
+      </button>
+    </div>
+  </div>
+</div>

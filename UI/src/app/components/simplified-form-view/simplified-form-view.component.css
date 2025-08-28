@@ -1,5 +1,49 @@
 .container-fluid {
-  max-width: 1200px;
+  /* Removed max-width constraint for full width display */
+}
+
+.subsection-wrapper {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 0.375rem;
+  border: 1px solid #e9ecef;
+}
+
+.pointer-class {
+  cursor: pointer;
+}
+
+.text-gray-300 {
+  color: #6b7280;
+}
+
+.fs-7 {
+  font-size: 0.875rem;
+}
+
+.fw-semibold {
+  font-weight: 600;
+}
+
+.va-sup {
+  vertical-align: super;
+}
+
+.fs-5 {
+  font-size: 1.25rem;
+}
+
+.fa-sort-desc, .fa-sort-asc {
+  transition: transform 0.2s ease;
+}
+
+.pointer-class:hover {
+  color: #374151;
+}
+
+.badge {
+  font-size: 0.75rem;
 }
 
 .spinner-border-sm {

@@ -1,19 +1,17 @@
-<div class="card form-section mb-4">
-  <div class="card-header section-header">
-    <h4 class="mb-0 py-2">
-      <i class="fas fa-folder-open me-2"></i>
-      {{ section.title }}
-    </h4>
+<div class="form-section mb-4">
+  <div class="d-flex align-items-center mb-4">
+    <h5 class="pointer-class fw-semibold mb-0 text-gray-300 fs-7 d-flex align-items-center" 
+        (click)="toggleCollapse()">
+      <i class="fa me-2 fs-5 va-sup" [class.fa-sort-desc]="!isCollapsed" [class.fa-sort-asc]="isCollapsed"></i>
+      <span>{{ subSection.title }}</span>
+    </h5>
+    <span class="badge bg-secondary ms-auto">{{ subSection.formFields?.length || 0 }} fields</span>
   </div>
-  <div class="card-body">
-    <div *ngIf="section.subSections && section.subSections.length > 0">
-      <app-form-subsection 
-        *ngFor="let subSection of section.subSections; trackBy: trackBySubSection" 
-        [subSection]="subSection">
-      </app-form-subsection>
+  <div [hidden]="isCollapsed">
+    <div *ngIf="!subSection.formFields || subSection.formFields.length === 0" class="text-muted text-center py-3">
+      No form fields available
     </div>
-    <div *ngIf="!section.subSections || section.subSections.length === 0" class="text-muted">
-      <em>No subsections found in this section.</em>
-    </div>
+    <app-form-field *ngFor="let formField of subSection.formFields; trackBy: trackByFormField" 
+                   [formField]="formField"></app-form-field>
   </div>
 </div>

@@ -1,32 +1,134 @@
-<div class="card form-field h-100">
-  <div class="card-body">
-    <div class="d-flex align-items-center mb-2">
-      <i [class]="getFieldIcon()" class="text-primary me-2"></i>
-      <h6 class="card-title mb-0 field-label">
-        {{ field.label }}
-        <span *ngIf="field.required" class="text-danger ms-1">*</span>
-      </h6>
-    </div>
-    
-    <div class="mb-2">
-      <span class="badge bg-secondary">{{ getFieldTypeDisplay() }}</span>
-    </div>
-    
-    <div *ngIf="field.placeholder" class="text-muted small mb-2">
-      <strong>Placeholder:</strong> {{ field.placeholder }}
-    </div>
-    
-    <div *ngIf="field.options && field.options.length > 0" class="text-muted small">
-      <strong>Options:</strong>
-      <ul class="list-unstyled ms-2 mt-1">
-        <li *ngFor="let option of field.options" class="small">• {{ option }}</li>
-      </ul>
-    </div>
-    
-    <div class="mt-2">
-      <small class="text-muted">
-        {{ field.required ? 'Required field' : 'Optional field' }}
-      </small>
+<div class="position-relative py-2" [attr.tabindex]="formField.tabIndex">
+  <div class="m-0 ms-2">
+    <div class="form-group mb-3">
+      <div class="row align-items-center">
+        <div class="col-sm-4" *ngIf="formField.type != 24">
+          <label class="form-label fw-semibold mb-0">
+            <i [class]="getFieldIcon()" class="text-primary me-2"></i>
+            {{ formField.label }}
+            <span *ngIf="formField.required" class="text-danger ms-1">*</span>
+          </label>
+        </div>
+        <div class="col-sm-8">
+          <div [ngSwitch]="getFieldTypeString()">
+        <!-- Text Input -->
+        <input *ngSwitchCase="'Text'" 
+               type="text" 
+               class="form-control"
+               [placeholder]="formField.placeholder || 'Enter ' + formField.label"
+               [required]="formField.required">
+        
+        <!-- Email Input -->
+        <input *ngSwitchCase="'Email'" 
+               type="email" 
+               class="form-control"
+               [placeholder]="formField.placeholder || 'Enter email address'"
+               [required]="formField.required">
+        
+        <!-- Number Input -->
+        <input *ngSwitchCase="'Number'" 
+               type="number" 
+               class="form-control"
+               [placeholder]="formField.placeholder || 'Enter number'"
+               [required]="formField.required">
+        
+        <!-- Phone Input -->
+        <input *ngSwitchCase="'Phone'" 
+               type="tel" 
+               class="form-control"
+               [placeholder]="formField.placeholder || 'Enter phone number'"
+               [required]="formField.required">
+        
+        <!-- Date Input -->
+        <input *ngSwitchCase="'Date'" 
+               type="date" 
+               class="form-control"
+               [required]="formField.required">
+        
+        <!-- Dropdown/Select -->
+        <select *ngSwitchCase="'Dropdown'" 
+                class="form-select"
+                [required]="formField.required">
+          <option value="" disabled selected>{{ formField.placeholder || 'Select an option' }}</option>
+          <option *ngFor="let option of formField.options" [value]="option">{{ option }}</option>
+        </select>
+        
+        <!-- Textarea -->
+        <textarea *ngSwitchCase="'Textarea'" 
+                  class="form-control"
+                  rows="3"
+                  [placeholder]="formField.placeholder || 'Enter your text here'"
+                  [required]="formField.required"></textarea>
+        
+        <!-- Radio Buttons -->
+        <div *ngSwitchCase="'Radio'" class="mt-2">
+          <div *ngFor="let option of formField.options; let i = index" class="form-check">
+            <input class="form-check-input" 
+                   type="radio" 
+                   [name]="'radio_' + formField.id"
+                   [id]="'radio_' + formField.id + '_' + i"
+                   [value]="option"
+                   [required]="formField.required">
+            <label class="form-check-label" [for]="'radio_' + formField.id + '_' + i">
+              {{ option }}
+            </label>
+          </div>
+        </div>
+        
+        <!-- Checkboxes -->
+        <div *ngSwitchCase="'Checkbox'" class="mt-2">
+          <div *ngFor="let option of formField.options; let i = index" class="form-check">
+            <input class="form-check-input" 
+                   type="checkbox" 
+                   [id]="'checkbox_' + formField.id + '_' + i"
+                   [value]="option">
+            <label class="form-check-label" [for]="'checkbox_' + formField.id + '_' + i">
+              {{ option }}
+            </label>
+          </div>
+        </div>
+        
+        <!-- File Upload -->
+        <div *ngSwitchCase="'File'" class="mt-2">
+          <input type="file" 
+                 class="form-control"
+                 [required]="formField.required">
+          <div class="form-text">{{ formField.placeholder || 'Choose file to upload' }}</div>
+        </div>
+        
+        <!-- Switch/Toggle -->
+        <div *ngSwitchCase="'Switch'" class="form-check form-switch mt-2">
+          <input class="form-check-input" 
+                 type="checkbox" 
+                 [id]="'switch_' + formField.id"
+                 [required]="formField.required">
+          <label class="form-check-label" [for]="'switch_' + formField.id">
+            {{ formField.label }}
+          </label>
+        </div>
+        
+        <!-- Label (display only) -->
+        <div *ngSwitchCase="'Label'" class="alert alert-info">
+          <i [class]="getFieldIcon()" class="text-primary me-2"></i>
+          {{ formField.placeholder || formField.label }}
+        </div>
+        
+        <!-- Default case for unknown types -->
+        <input *ngSwitchDefault 
+               type="text" 
+               class="form-control"
+               [placeholder]="formField.placeholder || 'Enter ' + formField.label"
+               [required]="formField.required">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Field metadata (for development/debugging) -->
+      <div class="mt-1" *ngIf="showDebugInfo">
+        <small class="text-muted">
+          Type: {{ formField.type }} | Col: {{ formField.columnIndex }} | Tab: {{ formField.tabIndex }}
+        </small>
+      </div>
     </div>
   </div>
 </div>

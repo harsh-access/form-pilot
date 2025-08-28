@@ -16,7 +16,10 @@ namespace EditForm.Controllers
                 var response = await AIAssistanceDomain.ProcessFormAssistanceRequest(request);
                 if(response.Type == "Updated")
                 {
-                    EditFormDomain.DynamicForm = response?.NewData;
+                    if (EditFormDomain.DynamicForms.Count > 0 && response?.NewData != null)
+                    {
+                        EditFormDomain.DynamicForms[0] = response.NewData;
+                    }
                 }
                 return Ok(response);
             }

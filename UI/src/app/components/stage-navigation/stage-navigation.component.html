@@ -1,0 +1,14 @@
+<div class="px-1">
+  <ul class="align-items-center row list-unstyled stage-list mb-0" *ngIf="sections && sections.length > 0">
+    <li *ngFor="let section of sections; let num=index" class="col-xs-12 col-sm-2 my-2 px-0"
+        (click)="onSectionClick(section)" [class.active]="activeSectionId === section.id">
+      <div class="rounded p-3 d-flex align-items-center justify-content-between shadow-sm cursor-pointer fw-semibold"
+           [ngClass]="activeSectionId === section.id ? 'text-white' : 'text-gray-300 bg-white'"
+           [style.background-color]="activeSectionId === section.id ? '#5d9bfb' : ''">
+        {{ section.title }}
+        <i aria-hidden="true" class="fa fa-check-circle ms-auto me-0 fs-6"
+           [ngClass]="activeSectionId === section.id ? 'text-white' : 'text-light-green'"></i>
+      </div>
+    </li>
+  </ul>
+</div>

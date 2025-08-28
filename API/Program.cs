@@ -19,6 +19,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddSingleton<FormDomain>();
 builder.Services.AddSingleton<SectionDomain>();
 builder.Services.AddSingleton<SubSectionDomain>();
 builder.Services.AddSingleton<FormFieldDomain>();

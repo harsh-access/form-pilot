@@ -1,13 +1,39 @@
-.section-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+.form-section {
+  margin-bottom: 1.5rem;
 }
 
-.section-header h4 {
+.pointer-class {
+  cursor: pointer;
+}
+
+.text-gray-300 {
+  color: #6b7280;
+}
+
+.fs-7 {
+  font-size: 0.875rem;
+}
+
+.fw-semibold {
   font-weight: 600;
 }
 
-.card {
-  border: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.va-sup {
+  vertical-align: super;
+}
+
+.fs-5 {
+  font-size: 1.25rem;
+}
+
+.fa-sort-desc, .fa-sort-asc {
+  transition: transform 0.2s ease;
+}
+
+.pointer-class:hover {
+  color: #374151;
+}
+
+.badge {
+  font-size: 0.75rem;
 }

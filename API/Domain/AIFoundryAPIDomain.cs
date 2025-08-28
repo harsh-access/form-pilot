@@ -53,7 +53,7 @@ namespace EditForm.Domain
                     if (contentItem is MessageTextContent textItem)
                     {
                         Console.Write(textItem.Text);
-                        if (threadMessage.Role == MessageRole.Agent)
+                        if (threadMessage.Role != MessageRole.User)
                         {
                             messageList.Add(textItem.Text);
                         }

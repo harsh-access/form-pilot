@@ -7,10 +7,11 @@ import { FormField } from '../../services/simplified-form.service';
   styleUrls: ['./form-field.component.css']
 })
 export class FormFieldComponent {
-  @Input() field!: FormField;
+  @Input() formField!: FormField;
+  @Input() maxColumn: number = 3;
 
   getFieldTypeDisplay(): string {
-    switch (this.field.type) {
+    switch (this.formField.type) {
       case 11: return 'Text Input';
       case 17: return 'Textarea';
       case 12: return 'Date Picker';
@@ -21,12 +22,12 @@ export class FormFieldComponent {
       case 28: return 'Switch';
       case 65: return 'Checkbox';
       case 24: return 'Label';
-      default: return `Field Type ${this.field.type}`;
+      default: return `Field Type ${this.formField.type}`;
     }
   }
 
   getFieldIcon(): string {
-    switch (this.field.type) {
+    switch (this.formField.type) {
       case 11: return 'fas fa-keyboard';
       case 17: return 'fas fa-align-left';
       case 12: return 'fas fa-calendar-alt';
@@ -40,4 +41,37 @@ export class FormFieldComponent {
       default: return 'fas fa-question-circle';
     }
   }
+
+  getCurrentColumnIndex(): number {
+    if (this.maxColumn && this.maxColumn > 0) {
+      return 12 / this.maxColumn;
+    }
+    return 4; // Default to col-sm-4 (3 columns per row)
+  }
+
+  getConditionalCSSFlag(): string {
+    if (this.formField.type === 22) { // File Upload
+      return 'col-sm-4';
+    }
+    
+    return `col-xs-12 col-sm-${this.getCurrentColumnIndex()}`;
+  }
+
+  getFieldTypeString(): string {
+    switch (this.formField.type) {
+      case 11: return 'Text';
+      case 17: return 'Textarea';
+      case 12: return 'Date';
+      case 14: return 'Radio';
+      case 18: return 'Dropdown';
+      case 22: return 'File';
+      case 25: return 'Checkbox';
+      case 28: return 'Switch';
+      case 65: return 'Checkbox';
+      case 24: return 'Label';
+      default: return 'Text';
+    }
+  }
+
+  showDebugInfo: boolean = false;
 }
