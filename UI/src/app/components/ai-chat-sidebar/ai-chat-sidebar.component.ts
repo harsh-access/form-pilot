@@ -44,7 +44,7 @@ export class AiChatSidebarComponent implements OnInit {
             this.isLoading = false;
           },
           error: (error) => {
-            console.error('AI assistance error:', error);
+            console.error('FormPilot error:', error);
             this.addMessage('Sorry, I encountered an error processing your request. Please try again.', false);
             this.isLoading = false;
           }

@@ -40,11 +40,11 @@ export class AIAssistanceComponent {
         this.previewData = this.aiResponse.newData;
         this.showPreview = true;
       } else if (this.aiResponse?.type === 'Ask_User') {
-        this.chatMessage.emit(`AI Assistant: ${this.aiResponse.summary}`);
+        this.chatMessage.emit(`FormPilot: ${this.aiResponse.summary}`);
       }
     } catch (error) {
-      console.error('AI assistance error:', error);
-      this.chatMessage.emit('AI Assistant: Sorry, I encountered an error processing your request. Please try again.');
+      console.error('FormPilot error:', error);
+      this.chatMessage.emit('FormPilot: Sorry, I encountered an error processing your request. Please try again.');
     } finally {
       this.isProcessing = false;
     }
@@ -56,14 +56,8 @@ export class AIAssistanceComponent {
       this.showPreview = false;
       this.previewData = null;
       this.userPrompt = '';
-      this.chatMessage.emit(`AI Assistant: ${this.aiResponse?.summary || 'Form updated successfully!'}`);
+      this.chatMessage.emit(`FormPilot: ${this.aiResponse?.summary || 'Form updated successfully!'}`);
     }
-  }
-
-  rejectPreview(): void {
-    this.showPreview = false;
-    this.previewData = null;
-    this.chatMessage.emit('AI Assistant: Preview rejected. Please provide more specific instructions if needed.');
   }
 
   clearPrompt(): void {
