@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormPilot POC - Technical Architecture</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .section {
+            padding: 40px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+
+        .mermaid {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .tech-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .tech-card h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+
+        .tech-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tech-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .tech-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .feature-box h3 {
+            margin: 0 0 15px 0;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .feature-list li {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 5px;
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>FormPilot POC</h1>
+            <p>Technical Architecture & Data Flow</p>
+        </div>
+
+        <div class="section">
+            <h2>🏗️ System Architecture Overview</h2>
+            <div class="mermaid">
+                graph TB
+                subgraph Frontend["🎨 Frontend - Angular 15"]
+                UI[👤 User Interface]
+                SN[🧭 Stage Navigation]
+                FS[📋 Form Section]
+                FSS[📝 Form Subsection]
+                FF[🔧 Form Field]
+                AIC[🤖 AI Chat Sidebar]
+                end
+
+                subgraph Backend["⚙️ Backend - .NET 8 API"]
+                FC[📊 Form Controller]
+                SC[📑 Sections Controller]
+                AFAC[🧠 AI Foundry Controller]
+                end
+
+                subgraph Azure["☁️ Azure AI Services"]
+                AAI[🤖 Azure AI Foundry]
+                ACR[💬 Chat Completion]
+                end
+
+                subgraph Data["💾 In-Memory Storage"]
+                MEMORY[(📋 Static List Forms)]
+                end
+
+                UI --> SN
+                UI --> AIC
+                SN --> FS
+                FS --> FSS
+                FSS --> FF
+
+                FS --> FC
+                AIC --> AFAC
+
+                FC --> MEMORY
+                AFAC --> AAI
+                AAI --> ACR
+
+                classDef frontend fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+                classDef backend fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+                classDef ai fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+                classDef data fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+
+                class UI,SN,FS,FSS,FF,AIC frontend
+                class FC,SC,AFAC backend
+                class AAI,ACR ai
+                class MEMORY data
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔄 AI-Powered Form Modification Flow</h2>
+            <div class="mermaid">
+                sequenceDiagram
+                participant User as 👤 User
+                participant UI as 🎨 Angular UI
+                participant FormAPI as ⚙️ Form API
+                participant AIAPI as 🧠 AI API
+                participant Azure as ☁️ Azure AI
+                participant Memory as 💾 In-Memory Storage
+
+                User->>UI: 1. Enter AI prompt
+                UI->>AIAPI: 2. POST /api/AIFoundryAPI/assist
+                Note over AIAPI: {CurrentForm, UserPrompt}
+                AIAPI->>Azure: 3. Process modification request
+                Azure-->>AIAPI: 4. AI response with changes
+                AIAPI-->>UI: 5. {type: Updated, newData}
+
+                alt AI Response = Updated
+                UI->>FormAPI: 6. Refresh form data
+                FormAPI->>Memory: 7. Access static List Forms
+                Memory-->>FormAPI: 8. Return updated form data
+                FormAPI-->>UI: 9. Updated form JSON
+                UI-->>User: 10. Display updated form
+                else AI Response = Ask_User
+                UI-->>User: 6. Request clarification
+                end
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🛠️ Technology Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h3>🎨 Frontend</h3>
+                    <ul class="tech-list">
+                        <li><strong>Angular 15</strong> - SPA Framework</li>
+                        <li><strong>Bootstrap 5.2.3</strong> - UI Components</li>
+                        <li><strong>TypeScript</strong> - Type Safety</li>
+                        <li><strong>RxJS</strong> - Reactive Programming</li>
+                        <li><strong>FontAwesome</strong> - Icons</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <h3>⚙️ Backend</h3>
+                    <ul class="tech-list">
+                        <li><strong>.NET 8.0</strong> - Runtime</li>
+                        <li><strong>ASP.NET Core</strong> - Web API</li>
+                        <li><strong>In-Memory Storage</strong> - Static Lists</li>
+                        <li><strong>C#</strong> - Programming Language</li>
+                        <li><strong>CORS</strong> - Cross-Origin Support</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <h3>🧠 AI Integration</h3>
+                    <ul class="tech-list">
+                        <li><strong>Azure AI Foundry</strong> - AI Platform</li>
+                        <li><strong>Azure OpenAI</strong> - Language Models</li>
+                        <li><strong>Chat Completion API</strong> - AI Processing</li>
+                        <li><strong>JSON Processing</strong> - Data Exchange</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <h3>🔧 Development</h3>
+                    <ul class="tech-list">
+                        <li><strong>Azure DevOps</strong> - Source Control</li>
+                        <li><strong>npm/Node.js</strong> - Package Management</li>
+                        <li><strong>NuGet</strong> - .NET Packages</li>
+                        <li><strong>Git</strong> - Version Control</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📱 Responsive Grid Layout System</h2>
+            <div class="mermaid">
+                graph LR
+                subgraph Grid["📐 Bootstrap Grid"]
+                ROW[📏 Row Container]
+                LABEL[🏷️ Label Column col-sm-4]
+                INPUT[📝 Input Column col-sm-8]
+                ROW --> LABEL
+                ROW --> INPUT
+                end
+
+                subgraph Fields["🔧 Field Types"]
+                TEXT[📝 Text Input]
+                DROP[📋 Dropdown]
+                DATE[📅 Date Picker]
+                FILE[📎 File Upload]
+                RADIO[🔘 Radio Buttons]
+                CHECK[☑️ Checkboxes]
+                end
+
+                subgraph Layout["📊 Dynamic Layout"]
+                CALC[⚡ Auto Calculate]
+                TWO[👥 2 Fields: col-sm-6]
+                THREE[👥👥👥 3 Fields: col-sm-4]
+                FOUR[👥👥👥👥 4+ Fields: col-sm-3]
+                CALC --> TWO
+                CALC --> THREE
+                CALC --> FOUR
+                end
+
+                INPUT --> TEXT
+                INPUT --> DROP
+                INPUT --> DATE
+                INPUT --> FILE
+                INPUT --> RADIO
+                INPUT --> CHECK
+
+                classDef grid fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+                classDef fields fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+                classDef layout fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+
+                class ROW,LABEL,INPUT grid
+                class TEXT,DROP,DATE,FILE,RADIO,CHECK fields
+                class CALC,TWO,THREE,FOUR layout
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>✨ Key Features</h2>
+            <div class="feature-box">
+                <h3>🚀 FormPilot POC Capabilities</h3>
+                <ul class="feature-list">
+                    <li>🎨 <strong>Dynamic Form Rendering</strong><br />Real-time form generation from JSON</li>
+                    <li>🤖 <strong>AI-Powered Modifications</strong><br />Natural language form editing</li>
+                    <li>📱 <strong>Responsive Design</strong><br />Mobile-first Bootstrap grid</li>
+                    <li>🔧 <strong>Multiple Field Types</strong><br />Text, dropdown, date, file upload</li>
+                    <li>⚡ <strong>Real-time Updates</strong><br />Instant form refresh after AI changes</li>
+                    <li>🎯 <strong>Intuitive Navigation</strong><br />Stage-based form organization</li>
+                    <li>💬 <strong>Interactive AI Chat</strong><br />Sidebar for form assistance</li>
+                    <li>🔄 <strong>Auto-refresh</strong><br />Form updates when AI modifies structure</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Implementation Highlights</h2>
+            <div class="mermaid">
+  graph TD
+    START[FormPilot Launch] --> LOAD[Load Form Structure]
+    LOAD --> RENDER[Render Dynamic Fields]
+    RENDER --> INTERACT{User Action}
+
+    INTERACT -->|Use AI| AI_PROMPT[Enter AI Prompt]
+
+    AI_PROMPT --> AI_PROCESS[Azure AI Processing]
+    AI_PROCESS --> AI_RESPONSE{Response Type}
+
+    AI_RESPONSE -->|Updated| REFRESH[Refresh Form]
+    AI_RESPONSE -->|Ask User| CLARIFY[Request Clarification]
+
+    REFRESH --> RENDER
+    CLARIFY --> AI_PROMPT
+</div>
+
+        </div>
+
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            },
+            sequence: {
+                diagramMarginX: 50,
+                diagramMarginY: 10,
+                actorMargin: 50,
+                width: 150,
+                height: 65,
+                boxMargin: 10,
+                boxTextMargin: 5,
+                noteMargin: 10,
+                messageMargin: 35
+            }
+        });
+    </script>
+</body>
+
+</html>
