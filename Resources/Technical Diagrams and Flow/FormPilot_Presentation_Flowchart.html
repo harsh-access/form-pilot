@@ -189,6 +189,30 @@
             </div>
         </div>
 
+
+        <div class="section">
+            <h2>🎯 Implementation Highlights</h2>
+            <div class="mermaid">
+                graph TD
+                START[FormPilot Launch] --> LOAD[Load Form Structure]
+                LOAD --> RENDER[Render Dynamic Fields]
+                RENDER --> INTERACT{User Action}
+
+                INTERACT -->|Use AI| AI_PROMPT[Enter AI Prompt]
+
+                AI_PROMPT --> AI_PROCESS[Azure AI Processing]
+                AI_PROCESS --> AI_RESPONSE{Response Type}
+
+                AI_RESPONSE -->|Updated| REFRESH[Refresh Form]
+                AI_RESPONSE -->|Ask User| CLARIFY[Request Clarification]
+
+                REFRESH --> RENDER
+                CLARIFY --> AI_PROMPT
+            </div>
+
+        </div>
+
+
         <div class="section">
             <h2>🔄 AI-Powered Form Modification Flow</h2>
             <div class="mermaid">
@@ -254,60 +278,11 @@
                 <div class="tech-card">
                     <h3>🔧 Development</h3>
                     <ul class="tech-list">
-                        <li><strong>Azure DevOps</strong> - Source Control</li>
                         <li><strong>npm/Node.js</strong> - Package Management</li>
                         <li><strong>NuGet</strong> - .NET Packages</li>
                         <li><strong>Git</strong> - Version Control</li>
                     </ul>
                 </div>
-            </div>
-        </div>
-
-        <div class="section">
-            <h2>📱 Responsive Grid Layout System</h2>
-            <div class="mermaid">
-                graph LR
-                subgraph Grid["📐 Bootstrap Grid"]
-                ROW[📏 Row Container]
-                LABEL[🏷️ Label Column col-sm-4]
-                INPUT[📝 Input Column col-sm-8]
-                ROW --> LABEL
-                ROW --> INPUT
-                end
-
-                subgraph Fields["🔧 Field Types"]
-                TEXT[📝 Text Input]
-                DROP[📋 Dropdown]
-                DATE[📅 Date Picker]
-                FILE[📎 File Upload]
-                RADIO[🔘 Radio Buttons]
-                CHECK[☑️ Checkboxes]
-                end
-
-                subgraph Layout["📊 Dynamic Layout"]
-                CALC[⚡ Auto Calculate]
-                TWO[👥 2 Fields: col-sm-6]
-                THREE[👥👥👥 3 Fields: col-sm-4]
-                FOUR[👥👥👥👥 4+ Fields: col-sm-3]
-                CALC --> TWO
-                CALC --> THREE
-                CALC --> FOUR
-                end
-
-                INPUT --> TEXT
-                INPUT --> DROP
-                INPUT --> DATE
-                INPUT --> FILE
-                INPUT --> RADIO
-                INPUT --> CHECK
-
-                classDef grid fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
-                classDef fields fill:#fff3e0,stroke:#ff9800,stroke-width:2px
-                classDef layout fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
-
-                class ROW,LABEL,INPUT grid
-                class TEXT,DROP,DATE,FILE,RADIO,CHECK fields
-                class CALC,TWO,THREE,FOUR layout
             </div>
         </div>
 
@@ -318,36 +293,11 @@
                 <ul class="feature-list">
                     <li>🎨 <strong>Dynamic Form Rendering</strong><br />Real-time form generation from JSON</li>
                     <li>🤖 <strong>AI-Powered Modifications</strong><br />Natural language form editing</li>
-                    <li>📱 <strong>Responsive Design</strong><br />Mobile-first Bootstrap grid</li>
                     <li>🔧 <strong>Multiple Field Types</strong><br />Text, dropdown, date, file upload</li>
-                    <li>⚡ <strong>Real-time Updates</strong><br />Instant form refresh after AI changes</li>
-                    <li>🎯 <strong>Intuitive Navigation</strong><br />Stage-based form organization</li>
                     <li>💬 <strong>Interactive AI Chat</strong><br />Sidebar for form assistance</li>
                     <li>🔄 <strong>Auto-refresh</strong><br />Form updates when AI modifies structure</li>
                 </ul>
             </div>
-        </div>
-
-        <div class="section">
-            <h2>🎯 Implementation Highlights</h2>
-            <div class="mermaid">
-  graph TD
-    START[FormPilot Launch] --> LOAD[Load Form Structure]
-    LOAD --> RENDER[Render Dynamic Fields]
-    RENDER --> INTERACT{User Action}
-
-    INTERACT -->|Use AI| AI_PROMPT[Enter AI Prompt]
-
-    AI_PROMPT --> AI_PROCESS[Azure AI Processing]
-    AI_PROCESS --> AI_RESPONSE{Response Type}
-
-    AI_RESPONSE -->|Updated| REFRESH[Refresh Form]
-    AI_RESPONSE -->|Ask User| CLARIFY[Request Clarification]
-
-    REFRESH --> RENDER
-    CLARIFY --> AI_PROMPT
-</div>
-
         </div>
 
     </div>
